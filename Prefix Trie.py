@@ -143,7 +143,6 @@ class Trie(object):
         for char in range(len(n.children)):
             if n.children[char] == None:
                 continue
-            #print char
             self.printKeysHelper(n.children[char])
 
 
