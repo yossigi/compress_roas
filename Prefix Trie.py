@@ -148,25 +148,28 @@ class Trie(object):
                 continue
             self.printKeysHelper(n.children[char])
 
+def main():
+    print "This is a test of Class Trie!"
+    print "[1] Creating a Trie Node and insearting 4 Prefix's :"
 
-print "This is a test of Class Trie!"
-print "[1] Creating a Trie Node and insearting 4 Prefix's :"
+    t = Trie()
+    # Adding the bottom 4 Prefix's
+    t.add('128.8.0/18', 1)
+    # t.add('128.8.64/18',1)  # Adding this will make '128.8/16' combine and extend to 18.
+    t.add('128.8.192/18', 1)
+    t.add('128.8.128/18', 1)
 
-t = Trie()
-# Adding the bottom 4 Prefix's
-t.add('128.8.0/18', 1)
-# t.add('128.8.64/18',1)  # Adding this will make '128.8/16' combine and extend to 18.
-t.add('128.8.192/18', 1)
-t.add('128.8.128/18', 1)
+    # Adding the /17 Prefix's
+    t.add('128.8.128/17', 1)
+    t.add('128.8.0/17', 1)
 
-# Adding the /17 Prefix's
-t.add('128.8.128/17', 1)
-t.add('128.8.0/17', 1)
+    # Adding the main /16 Prefix
+    t.add('128.8/16', 1)
 
-# Adding the main /16 Prefix
-t.add('128.8/16', 1)
+    # Adding a random IP prefix for testing
+    t.add('10.233.0.3/32', 2)
 
-# Adding a random IP prefix for testing
-t.add('10.233.0.3/32', 2)
+    t.printKey()
 
-t.printKey()
+
+main()
