@@ -67,7 +67,9 @@ def dec_to_bin(IP):
             continue
         temp = str(bin(int(octet))[2:])  # To remove the '0b' at the beginning
         if len(temp) < OCTET_SIZE:
-            temp = '0' * (OCTET_SIZE - len(temp)) + temp #To fill the rest of the string with 0's (to make sure it'll be 8 bits)
+            # To fill the rest of the string with 0's (to make sure it'll be 8
+            # bits)
+            temp = '0' * (OCTET_SIZE - len(temp)) + temp
         bin_repr += temp
 
     return bin_repr
@@ -76,7 +78,8 @@ def dec_to_bin(IP):
 def bin_to_dec(IP):
     ''' The opposite of dec_to_bin() '''
     dec_repr = ''
-    while(len(IP) > OCTET_SIZE): #So that you stop and don't add a '.' at the end.
+    # So that you stop and don't add a '.' at the end.
+    while(len(IP) > OCTET_SIZE):
         dec_repr += str(int(IP[:OCTET_SIZE], 2)) + '.'
         IP = IP[OCTET_SIZE:]
     dec_repr += str(int(IP[:OCTET_SIZE], 2))
@@ -87,11 +90,12 @@ def bin_to_dec(IP):
 class Trie(object):
 
     def __init__(self):
-        self.root = Node() #The Head of the tree
+        self.root = Node()  # The Head of the tree
 
     def add(self, prefix, AS):
 
-        prefix = prefix.split('/')  # Split so that you can get rid of the end of the prefix "/32"
+        # Split so that you can get rid of the end of the prefix "/32"
+        prefix = prefix.split('/')
         # This will cut the binary repr of the IP prefix to the max length
         binIP = dec_to_bin(prefix[0])[:int(prefix[1])]
 
@@ -148,6 +152,7 @@ class Trie(object):
                 continue
             self.printKeysHelper(n.children[char])
 
+
 def main():
     print "This is a test of Class Trie!"
     print "[1] Creating a Trie Node and insearting 4 Prefix's :"
@@ -155,7 +160,8 @@ def main():
     t = Trie()
     # Adding the bottom 4 Prefix's
     t.add('128.8.0/18', 1)
-    # t.add('128.8.64/18',1)  # Adding this will make '128.8/16' combine and extend to 18.
+    # t.add('128.8.64/18',1)  # Adding this will make '128.8/16' combine and
+    # extend to 18.
     t.add('128.8.192/18', 1)
     t.add('128.8.128/18', 1)
 
