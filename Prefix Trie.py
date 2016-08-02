@@ -4,6 +4,7 @@ Created on Mon Aug 01 10:47:45 2016
 
 @author: Omar Sagga
 """
+
 NUM_CHILD = 2
 
 class Node(object):
@@ -13,12 +14,7 @@ class Node(object):
     def __init__(self):
         self.children = [None] * NUM_CHILD
         self.endsPath = False
-        self.dec_IP = ""
-        self.MaxLength = ""
-        self.AS = 0
 
-    def getBinRepr(self):
-        return dec_to_bin(self.dec_IP)[:int(self.getMaxLength())]
     def setAS(self,AS):
         self.AS = AS
     
@@ -30,6 +26,9 @@ class Node(object):
         
     def getPrefix(self):
         return self.dec_IP
+        
+    def getBinRepr(self):
+        return dec_to_bin(self.getPrefix(self.dec_IP))[:int(self.getMaxLength())]
         
     def setMaxLength(self,ML):
         self.MaxLength = ML
@@ -150,14 +149,23 @@ print "This is a test of Class Trie!"
 print "[1] Creating a Trie Node and insearting 4 Prefix's :"
 
 t = Trie()
+# Adding the bottom 4 Prefix's
+t.add('128.8.0/18',1)
+#t.add('128.8.64/18',1)
 t.add('128.8.192/18',1)
 t.add('128.8.128/18',1)
-t.add('128.8.0/18',1)
-t.add('128.8.64/18',1)
-t.add('128.8.128/18',1)
+
+# Adding the /17 Prefix's
 t.add('128.8.128/17',1)
 t.add('128.8.0/17',1)
+
+# Adding the main /16 Prefix
 t.add('128.8/16',1)
+
+# Adding a random IP prefix for testing
 t.add('10.233.0.3/32', 2)
+
+# For Debugging
 print '##########'
+
 t.printKey()
