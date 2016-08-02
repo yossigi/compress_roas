@@ -89,8 +89,13 @@ def bin_to_dec(IP):
 
 class Trie(object):
 
+
     def __init__(self):
         self.root = Node()  # The Head of the tree
+        self.PrefList = list()
+
+    def getPrefixList(self):
+        return self.PrefList
 
     def add(self, prefix, AS):
 
@@ -146,6 +151,7 @@ class Trie(object):
 
         if (n.getEndsPath()):
             print n  # Print's the IP prefix
+            self.PrefList.append(n) #To append to the Prefix List
 
         for char in range(len(n.children)):
             if n.children[char] == None:
@@ -153,29 +159,27 @@ class Trie(object):
             self.printKeysHelper(n.children[char])
 
 
-def main():
-    print "This is a test of Class Trie!"
-    print "[1] Creating a Trie Node and insearting 4 Prefix's :"
 
-    t = Trie()
-    # Adding the bottom 4 Prefix's
-    t.add('128.8.0/18', 1)
-    # t.add('128.8.64/18',1)  # Adding this will make '128.8/16' combine and
-    # extend to 18.
-    t.add('128.8.192/18', 1)
-    t.add('128.8.128/18', 1)
+print "This is a test of Class Trie!"
+print "[1] Creating a Trie Node and insearting 4 Prefix's :"
 
-    # Adding the /17 Prefix's
-    t.add('128.8.128/17', 1)
-    t.add('128.8.0/17', 1)
+t = Trie()
+# Adding the bottom 4 Prefix's
+t.add('128.8.0/18', 1)
+# t.add('128.8.64/18',1)  # Adding this will make '128.8/16' combine and
+# extend to 18.
+t.add('128.8.192/18', 1)
+t.add('128.8.128/18', 1)
 
-    # Adding the main /16 Prefix
-    t.add('128.8/16', 1)
+# Adding the /17 Prefix's
+t.add('128.8.128/17', 1)
+t.add('128.8.0/17', 1)
 
-    # Adding a random IP prefix for testing
-    t.add('10.233.0.3/32', 2)
+# Adding the main /16 Prefix
+t.add('128.8/16', 1)
 
-    t.printKey()
+# Adding a random IP prefix for testing
+t.add('10.233.0.3/32', 2)
 
-
-main()
+t.printKey()
+print(t.getPrefixList())   #To print them as a list
