@@ -3,14 +3,15 @@
 Created on Mon Aug 01 10:47:45 2016
 @author: Omar Sagga
 """
+import map_functions as binTools
+import netaddr
 
 NUM_CHILD = 2
-OCTET_SIZE = 8
 
 
 class Node(object):
     ''' Trie Node class for the IP prefix Trie '''
-    __slots__ = ['children', 'endsPath', 'dec_IP', 'AS', 'MaxLength']
+    __slots__ = ['children', 'endsPath', 'prefix', 'AS', 'MaxLength']
 
     def __init__(self):
         self.children = [None] * NUM_CHILD
@@ -23,13 +24,13 @@ class Node(object):
         return self.AS
 
     def setPrefix(self, Prefix):
-        self.dec_IP = Prefix
+        self.prefix = Prefix
 
     def getPrefix(self):
-        return self.dec_IP
+        return self.prefix
 
     def getBinRepr(self):
-        return dec_to_bin(self.getPrefix(self.dec_IP))[:int(self.getMaxLength())]
+        return binTools.prefix_to_key(str_to_prefixObj(self.prefix+'/'+self.MaxLength))
 
     def setMaxLength(self, ML):
         self.MaxLength = ML
@@ -53,38 +54,10 @@ class Node(object):
         return [x.MaxLength for x in self.children]
 
     def __repr__(self):
-        return "IP Prefix: " + self.dec_IP + "/" + self.MaxLength + "  AS " + str(self.AS)
+        return "IP Prefix: " + self.prefix + "/" + str(self.MaxLength) + "  AS " + str(self.AS)
 
-
-def dec_to_bin(IP):
-    ''' Converts from the decimal represination of the IP prefix
-            to a binary one to use for saving in the Trie.
-    '''
-    bin_repr = ''
-    IP = IP.split('.')
-    for octet in IP:
-        if octet == '':
-            continue
-        temp = str(bin(int(octet))[2:])  # To remove the '0b' at the beginning
-        if len(temp) < OCTET_SIZE:
-            # To fill the rest of the string with 0's (to make sure it'll be 8
-            # bits)
-            temp = '0' * (OCTET_SIZE - len(temp)) + temp
-        bin_repr += temp
-
-    return bin_repr
-
-
-def bin_to_dec(IP):
-    ''' The opposite of dec_to_bin() '''
-    dec_repr = ''
-    # So that you stop and don't add a '.' at the end.
-    while(len(IP) > OCTET_SIZE):
-        dec_repr += str(int(IP[:OCTET_SIZE], 2)) + '.'
-        IP = IP[OCTET_SIZE:]
-    dec_repr += str(int(IP[:OCTET_SIZE], 2))
-
-    return dec_repr
+def str_to_prefixObj(str):
+    return netaddr.IPNetwork(str)
 
 
 class Trie(object):
@@ -92,19 +65,14 @@ class Trie(object):
 
     def __init__(self):
         self.root = Node()  # The Head of the tree
-        self.PrefList = list()
+        self.PrefList = list() # The prefix list
 
     def getPrefixList(self):
         return self.PrefList
 
     def add(self, prefix, AS):
-
-        # Split so that you can get rid of the end of the prefix "/32"
-        prefix = prefix.split('/')
-        # This will cut the binary repr of the IP prefix to the max length
-        binIP = dec_to_bin(prefix[0])[:int(prefix[1])]
-
-        self.addHelper(self.root, binIP, prefix[0], AS, prefix[1])
+        binIP = binTools.prefix_to_key(str_to_prefixObj(prefix))
+        self.addHelper(self.root, binIP, prefix.split('/')[0], AS, len(binIP))
 
     def addHelper(self, n, bit, prefix, AS, ML):
         if bit == '':
@@ -112,8 +80,6 @@ class Trie(object):
             n.setAS(AS)
             n.setMaxLength(ML)
             n.setPrefix(prefix)
-            #(debugging) To know what has been added
-            # print n
 
             n.setEndsPath(True)
 
@@ -166,7 +132,7 @@ print "[1] Creating a Trie Node and insearting 4 Prefix's :"
 t = Trie()
 # Adding the bottom 4 Prefix's
 t.add('128.8.0/18', 1)
-# t.add('128.8.64/18',1)  # Adding this will make '128.8/16' combine and
+#t.add('128.8.64/18',1)  # Adding this will make '128.8/16' combine and
 # extend to 18.
 t.add('128.8.192/18', 1)
 t.add('128.8.128/18', 1)
