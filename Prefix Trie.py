@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 Created on Mon Aug 01 10:47:45 2016
-@author: Omar Sagga
+@author: Moe Sagga
 """
 
 NUM_CHILD = 2
