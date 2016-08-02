@@ -88,32 +88,36 @@ class Trie(object):
         self.root = Node()
 
     def add(self, prefix, AS):
+        # Split so that you can get rid of the end of the prefix "/32"
         prefix = prefix.split('/')
+        #This will cut the binary repr of the IP prefix to the max length
         binIP = dec_to_bin(prefix[0])[:int(prefix[1])]
-        #print "This is the fin bin repr :" + binIP
-        #print prefix[0] + '/' + prefix[1]
 
         self.addHelper(self.root, binIP ,prefix[0],AS,prefix[1])
 
     def addHelper(self,n, bit,prefix,AS,ML):
         if  bit == '':
+            # To hold the prefix, AS# and Max length info in the last Node.
             n.setAS(AS)
             n.setMaxLength(ML)
             n.setPrefix(prefix)
-            #print n.getPrefix()
-            #print n.getBinRepr()
-            print n
+            #(debugging) To know what has been added 
+            #print n 
+            
             n.setEndsPath(True)
             
-            # To merge and combin IP prefix's
+            # To merge and combin IP prefix's (The main this of this code)
             for child in n.children:
                 if child == None or child.getAS() != n.getAS():
                     return
             
             # If the conditions succead
             n.setMaxLength(min(n.maxL_child()))
+            
+            # To hide the IP prefix's of the child that got merged with parents
             n.children[0].setEndsPath(False)
             n.children[1].setEndsPath(False)
+            
             return
             
         f_bit = int(bit[0])
@@ -135,9 +139,7 @@ class Trie(object):
             return
 
         if (n.getEndsPath()):
-            print n
-            #print n.children
-
+            print n #Print's the IP prefix
 
         for char in range(len(n.children)):
             if n.children[char] == None:
@@ -166,6 +168,6 @@ t.add('128.8/16',1)
 t.add('10.233.0.3/32', 2)
 
 # For Debugging
-print '##########'
+#print '##########'
 
 t.printKey()
