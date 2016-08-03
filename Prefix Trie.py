@@ -30,7 +30,7 @@ class Node(object):
         return self.prefix
 
     def getBinRepr(self):
-        return binTools.prefix_to_key(str_to_prefixObj(self.prefex+'/'+self.MaxLength))
+        return binTools.prefix_to_key(str_to_prefixObj(self.prefix))
 
     def setMaxLength(self, ML):
         self.MaxLength = ML
@@ -54,7 +54,7 @@ class Node(object):
         return [x.MaxLength for x in self.children]
 
     def __repr__(self):
-        return "IP Prefix: " + self.prefix + "/" + str(self.MaxLength) + "  AS " + str(self.AS)
+        return "IP Prefix: " + self.prefix + '-' + str(self.MaxLength) + "  AS " + str(self.AS)
 
 def str_to_prefixObj(str):
     return netaddr.IPNetwork(str)
@@ -72,7 +72,7 @@ class Trie(object):
 
     def add(self, prefix, AS):
         binIP = binTools.prefix_to_key(str_to_prefixObj(prefix))
-        self.addHelper(self.root, binIP, prefix.split('/')[0], AS, len(binIP))
+        self.addHelper(self.root, binIP, prefix, AS, len(binIP))
 
     def addHelper(self, n, bit, prefix, AS, ML):
         if bit == '':
@@ -132,7 +132,7 @@ print "[1] Creating a Trie Node and insearting 4 Prefix's :"
 t = Trie()
 # Adding the bottom 4 Prefix's
 t.add('128.8.0/18', 1)
-# t.add('128.8.64/18',1)  # Adding this will make '128.8/16' combine and
+#t.add('128.8.64/18',1)  # Adding this will make '128.8/16' combine and
 # extend to 18.
 t.add('128.8.192/18', 1)
 t.add('128.8.128/18', 1)
