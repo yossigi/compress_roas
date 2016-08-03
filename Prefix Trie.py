@@ -30,7 +30,7 @@ class Node(object):
         return self.prefix
 
     def getBinRepr(self):
-        return binTools.prefix_to_key(str_to_prefixObj(self.prefix+'/'+self.MaxLength))
+        return binTools.prefix_to_key(str_to_prefixObj(self.prefex+'/'+self.MaxLength))
 
     def setMaxLength(self, ML):
         self.MaxLength = ML
