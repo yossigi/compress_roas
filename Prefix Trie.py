@@ -56,16 +56,16 @@ class Node(object):
     def __repr__(self):
         return "IP Prefix: " + self.prefix + '-' + str(self.MaxLength) + "  AS " + str(self.AS)
 
+
 def str_to_prefixObj(str):
     return netaddr.IPNetwork(str)
 
 
 class Trie(object):
 
-
     def __init__(self):
         self.root = Node()  # The Head of the tree
-        self.PrefList = list() # The prefix list
+        self.PrefList = list()  # The prefix list
 
     def getPrefixList(self):
         return self.PrefList
@@ -117,13 +117,12 @@ class Trie(object):
 
         if (n.getEndsPath()):
             print n  # Print's the IP prefix
-            self.PrefList.append(n) #To append to the Prefix List
+            self.PrefList.append(n)  # To append to the Prefix List
 
         for char in range(len(n.children)):
             if n.children[char] == None:
                 continue
             self.printKeysHelper(n.children[char])
-
 
 
 print "This is a test of Class Trie!"
@@ -132,7 +131,7 @@ print "[1] Creating a Trie Node and insearting 4 Prefix's :"
 t = Trie()
 # Adding the bottom 4 Prefix's
 t.add('128.8.0/18', 1)
-#t.add('128.8.64/18',1)  # Adding this will make '128.8/16' combine and
+# t.add('128.8.64/18',1)  # Adding this will make '128.8/16' combine and
 # extend to 18.
 t.add('128.8.192/18', 1)
 t.add('128.8.128/18', 1)
@@ -148,4 +147,4 @@ t.add('128.8/16', 1)
 t.add('10.233.0.3/32', 2)
 
 t.printKey()
-print(t.getPrefixList())   #To print them as a list
+print(t.getPrefixList())  # To print them as a list
