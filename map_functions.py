@@ -1,7 +1,6 @@
 import netaddr
 
 def prefix_to_key(prefix):
-    prefix = netaddr.IPNetwork(prefix)
     address = prefix.ip.bits().replace(".","")
     #print '###' + str(address)
     l = int(prefix.cidr.hostmask.bin, 2)
