@@ -2,9 +2,9 @@ import map_functions as binTools
 from pytrie import SortedStringTrie as trie, NULL
 #from pytrie import NULL
 
-
-def iteritems(d):
-    return d.iteritems()
+#
+# def iteritems(d):
+#     return d
 
 
 class Trie(trie):
@@ -39,7 +39,7 @@ class Trie(trie):
                 key = "Prefix: " + str(binTools.key_to_prefix(key_factory(parts))) + \
                     '-' + str(node.value[0]) + "  AS " + str(node.value[1])
                 yield (key, node.value)  # This is the line I changed
-            for part, child in iteritems(node.children):
+            for part, child in node.children.iteritems():
                 append(part)
                 for subresult in generator(child):
                     yield subresult

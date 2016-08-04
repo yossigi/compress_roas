@@ -48,7 +48,7 @@ def TuneKey(dkey):
 
         rchildlist += [ckey]
 
-    t.update({dkey: [minML(rchildlist), rchildlist[0].value[1]]})
+    t.update({dkey: [minML(rchildlist), rchildlist[0].value[1]]}) #I'm just updating the maxLength of the Prefix.
 
 
 def Tuneall():
