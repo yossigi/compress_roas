@@ -1,6 +1,6 @@
 import map_functions as binTools
-from pytrie import SortedStringTrie as trie
-from pytrie import NULL
+from pytrie import SortedStringTrie as trie, NULL
+#from pytrie import NULL
 
 
 def iteritems(d):
