@@ -1,30 +1,31 @@
 import map_functions as binTools
-from pytrie import SortedStringTrie as trie, NULL
-#from pytrie import NULL
+from pytrie import SortedStringTrie as trie, NULL,Node as node
 
-#
-# def iteritems(d):
-#     return d
-
+class NodeS(node):
+    __slots__ = ('value', 'children','show')
+    def __init__(self, value=NULL):
+        self.value = value
+        self.children = self.ChildrenFactory()
+        self.show = True
 
 class Trie(trie):
-
-    def f_items(self, prefix=None):
-        '''Return a list of this trie's items (``(key,value)`` tuples).
+    NodeFactory = NodeS
+    def dec_items(self, prefix=None):
+        '''Return a list or a string of this trie's items (``(key,value)`` tuples).
 
         :param prefix: If not None, return only the items associated with keys
             prefixed by ``prefix``.
         '''
         s = str()
         #l = list()
-        for item in self.f_iteritems(prefix):
+        for item in self.dec_iteritems(prefix):
             #l += [item]
             s += str(item) + '\n'
 
         # return l
         return s
 
-    def f_iteritems(self, prefix=None):
+    def dec_iteritems(self, prefix=None):
         '''Return an iterator over this trie's items (``(key,value)`` tuples).
 
         :param prefix: If not None, yield only the items associated with keys
@@ -35,10 +36,10 @@ class Trie(trie):
 
         def generator(node, key_factory=self.KeyFactory, parts=parts,
                       append=append, NULL=NULL):
-            if node.value is not NULL:
+            if node.value is not NULL and node.show:
                 key = "Prefix: " + str(binTools.key_to_prefix(key_factory(parts))) + \
                     '-' + str(node.value[0]) + "  AS " + str(node.value[1])
-                yield (key, node.value)  # This is the line I changed
+                yield key # This is the line I changed
             for part, child in node.children.iteritems():
                 append(part)
                 for subresult in generator(child):
