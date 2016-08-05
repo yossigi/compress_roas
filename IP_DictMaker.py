@@ -12,6 +12,6 @@ def getDict(filename):
 
 def ipReady(prefix, AS):
     key = binTools.prefix_to_key(prefix)
-    maxLength = len(key)
+    maxLength = len(key) -1
     AS = int(AS)
     return {key: [maxLength, AS]}

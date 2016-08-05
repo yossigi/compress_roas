@@ -8,15 +8,15 @@ def prefix_to_key(prefix):
     while(l > 0):
         address = address[:-1]
         l >>= 1
-    return address
+    return '$' + address
 
 
 def key_to_prefix(key):
-    #k = key[1:]
-    l = len(key)
+    k = key[1:]
+    l = len(k)
     i = 0
     j = 0
-    for c in key:
+    for c in k:
         i <<= 1
         i += int(c)
         j += 1

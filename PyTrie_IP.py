@@ -5,13 +5,14 @@ Created on Wed Aug 03 12:14:35 2016
 @author: Omar Sagga
 """
 
+
 from IPSortedStringTrie import Trie
 from IP_DictMaker import getDict
 
 
-IPfilename = "C:\Users\OSAGGA\Documents\ROA_PyTrie/ip_list.txt"
-t = Trie()
-t.update(getDict(IPfilename))
+IPfilename = "C:\Users\OSAGGA\Documents\ROA_PyTrie\ip_list.txt"
+dict = getDict(IPfilename)
+t = Trie(dict)
 
 
 def getDefaultChild(key):
@@ -38,25 +39,25 @@ def TuneKey(dkey):
 
     for child in dchildlist:
         # Check if the supposed Child is in the SubTrie under the parent.
-        nkey = t._find(dkey)
-        ckey = t._find(child)
+        ckey = t._find(child)  # The node of each child if there exists such.
+        nkey = t._find(dkey)  # The node of the inserted key.
 
-        if ckey is None:  # To check if the child exist's
+        if ckey is None or ckey.value[1] != nkey.value[1] :  # To check if the child exist's and AS's match.
             return
-        if ckey.value[1] != nkey.value[1]:  # To check if the AS's match
-            return
-
+        #ckey.
         rchildlist += [ckey]
-
-    t.update({dkey: [minML(rchildlist), rchildlist[0].value[1]]}) #I'm just updating the maxLength of the Prefix.
+    if len(rchildlist) == len(dchildlist):
+        for child in rchildlist:
+            child.show = False
+        nkey.show = True
+        nkey.value = [minML(rchildlist), rchildlist[0].value[1]] # I'm just updating the maxLength of the Prefix.
 
 
 def Tuneall():
     for key in t:
         TuneKey(key)
 
-# It needs to be twice for now because the way the combining goes is not
-# based on the sorting.
+
+
 Tuneall()
-Tuneall()
-print t.f_items()  # It's diffrent from the normal t.items() because this will show the keys as a IPv* format (and also in a string instead of a list)
+print t.dec_items()
