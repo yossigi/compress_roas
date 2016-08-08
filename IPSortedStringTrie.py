@@ -78,7 +78,7 @@ class Trie(trie):
             other = args[0]
             if isinstance(other, Mapping):
                 for key in other:
-                    #print "This is the key i'm inserting:",key
+                    # print "This is the key i'm inserting:",key
                     self[key] = NodeS
                     self[key].value = other[key]
                     # The auto-generated children's
@@ -94,18 +94,21 @@ class Trie(trie):
                         # To check if the child exist's and AS's match.
 
                         if ckey is None:
-                            #print "I'm out becuz (None value):", binTools.key_to_prefix(key)
+                            # print "I'm out becuz (None value):",
+                            # binTools.key_to_prefix(key)
                             break
                         if ckey.value is NULL:
-                            #print "I'm out becuz (NULL somethin):", binTools.key_to_prefix(key)
+                            # print "I'm out becuz (NULL somethin):",
+                            # binTools.key_to_prefix(key)
                             break
                         if ckey.value[1] != nkey.value[1]:
-                            #print "I'm out becuz (AS don't matches) :", binTools.key_to_prefix(key)
+                            # print "I'm out becuz (AS don't matches) :",
+                            # binTools.key_to_prefix(key)
                             break
                         rchildlist += [ckey]
                     if len(rchildlist) == len(dchildlist):
-                        #print "I'm doing the magic for the following key: ", binTools.key_to_prefix(key)
-                        #print rchildlist
+                        # print "I'm doing the magic for the following key: ", binTools.key_to_prefix(key)
+                        # print rchildlist
 
                         for child in rchildlist:
                             # print "###I'm not allowing stuff like:",key
