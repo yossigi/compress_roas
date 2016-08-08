@@ -78,6 +78,7 @@ class Trie(trie):
             other = args[0]
             if isinstance(other, Mapping):
                 for key in other:
+                    #print "This is the key i'm inserting:",key
                     self[key] = NodeS
                     self[key].value = other[key]
                     # The auto-generated children's
@@ -91,35 +92,41 @@ class Trie(trie):
                         # The node of the inserted key.
                         nkey = self._find(key)
                         # To check if the child exist's and AS's match.
-                        # if ckey is None or ckey.value[1] != nkey.value[1]:
 
-                        if ckey is None or ckey.value is NULL or ckey.value[1] != nkey.value[1]:
+                        if ckey is None:
+                            #print "I'm out becuz (None value):", binTools.key_to_prefix(key)
                             break
-
+                        if ckey.value is NULL:
+                            #print "I'm out becuz (NULL somethin):", binTools.key_to_prefix(key)
+                            break
+                        if ckey.value[1] != nkey.value[1]:
+                            #print "I'm out becuz (AS don't matches) :", binTools.key_to_prefix(key)
+                            break
                         rchildlist += [ckey]
                     if len(rchildlist) == len(dchildlist):
+                        #print "I'm doing the magic for the following key: ", binTools.key_to_prefix(key)
+                        #print rchildlist
+
                         for child in rchildlist:
+                            # print "###I'm not allowing stuff like:",key
                             child.show = False
 
                         nkey.show = True
                         # I'm just updating the maxLength of the Prefix.
                         nkey.value = [minML(rchildlist),
                                       rchildlist[0].value[1]]
-
-                    # print "Test!!!"
-
             elif hasattr(other, "keys"):
                 for key in other.keys():
-                    print "This is my IP :", binTools.key_to_prefix(key)
+                    print "@@@@@@@@@@@@@2This is my IP :", binTools.key_to_prefix(key)
                     self[key] = NodeS
                     self[key].value = other[key]
             else:
                 for key, value in other:
-                    print "This is my IP :", binTools.key_to_prefix(key)
+                    print "#############This is my IP :", binTools.key_to_prefix(key)
                     self[key] = NodeS
                     self[key].value = other[key]
         for key, value in kwds.items():
-            print "This is my IP :", binTools.key_to_prefix(key)
+            print "$$$$$$$$$$$$$$$$This is my IP :", binTools.key_to_prefix(key)
             self[key] = NodeS
             self[key].value = other[key]
 
