@@ -41,7 +41,7 @@ class Trie(trie):
 
         def generator(node, key_factory=self.KeyFactory, parts=parts,
                       append=append, NULL=NULL):
-            if node.value is not NULL and node.show:
+            if node.value is not NULL and node.show: #I added this extra check 'node.show' to hide the combined IP's
                 key = "Prefix: " + str(binTools.key_to_prefix(key_factory(parts))) + \
                     '-' + str(node.value[0]) + "  AS " + str(node.value[1])
                 yield key  # This is the line I changed
@@ -78,7 +78,6 @@ class Trie(trie):
             other = args[0]
             if isinstance(other, Mapping):
                 for key in other:
-                    # print "This is the key i'm inserting:",key
                     self[key] = NodeS
                     self[key].value = other[key]
                     # The auto-generated children's
@@ -94,24 +93,15 @@ class Trie(trie):
                         # To check if the child exist's and AS's match.
 
                         if ckey is None:
-                            # print "I'm out becuz (None value):",
-                            # binTools.key_to_prefix(key)
                             break
                         if ckey.value is NULL:
-                            # print "I'm out becuz (NULL somethin):",
-                            # binTools.key_to_prefix(key)
                             break
                         if ckey.value[1] != nkey.value[1]:
-                            # print "I'm out becuz (AS don't matches) :",
-                            # binTools.key_to_prefix(key)
                             break
                         rchildlist += [ckey]
                     if len(rchildlist) == len(dchildlist):
-                        # print "I'm doing the magic for the following key: ", binTools.key_to_prefix(key)
-                        # print rchildlist
 
                         for child in rchildlist:
-                            # print "###I'm not allowing stuff like:",key
                             child.show = False
 
                         nkey.show = True
