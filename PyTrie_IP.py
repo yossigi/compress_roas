@@ -32,7 +32,7 @@ def ipReady(prefix, AS, maxLength = None):
     AS = int(AS)
     return {key: [maxLength, AS, prefix]}
 
-IPfilename = "C:\Users\osagg\Documents\ROA_PyTrie\/roa_list.txt"
+IPfilename = "C:\Users\osagg\Documents\ROA_PyTrie\/ip_list.txt"
 t = Trie(getDict(IPfilename))
 
 print len(t.dec_items())
