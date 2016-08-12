@@ -19,14 +19,14 @@ class Trie(trie):
         :param prefix: If not None, return only the items associated with keys
             prefixed by ``prefix``.
         '''
-        s = str()
-        #l = list()
+        #s = str()
+        l = list()
         for item in self.dec_iteritems(prefix):
-            #l += [item]
-            s += str(item) + '\n'
+            l += [item]
+            #s += str(item) + '\n'
 
-        # return l
-        return s
+        return l
+        #return s
 
     def dec_iteritems(self, prefix=None):
         '''Return an iterator over this trie's items (``(key,value)`` tuples).
@@ -39,7 +39,8 @@ class Trie(trie):
 
         def generator(node, key_factory=self.KeyFactory, parts=parts,
                       append=append, NULL=NULL):
-            if node.value is not NULL and node.show :
+            if node.value is not NULL and node.show:
+                #print node.value
                 key = "Prefix: " + \
                     str(node.value[2])
                 key += '-' + str(node.value[0])
@@ -61,35 +62,37 @@ class Trie(trie):
         return generator(node)
 
     def combine_items(self):
-        rnode = self._root.children.get('$').children.get('4')
+        rnode = self._root
         self.dfs_items(rnode)
 
-    def dfs_items(self,node):
-        #print 'This is my node : ' ,node
-        if node is None or not node.children :
+    def dfs_items(self, node):
+        # print 'This is my node : ' ,node
+        if node is None or not node.children:
             return
 
-        # children = node.children.iteritems()
-        lchild = node.children.get('0')
-        #lchild = children.next()
-        # try :
-        # rchild = children.next()
-        rchild = node.children.get('1')
-        # except StopIteration:
-        #     rchild = None
+        g = node.children.iteritems()
+
+        lchild = node.children.get(str(g.next()[0]))
+        try:
+            rchild = node.children.get(str(g.next()[0]))
+        except StopIteration:
+            rchild = None
 
         self.dfs_items(lchild)
         self.dfs_items(rchild)
-        if lchild is not None and node.value is not NULL and rchild is not None  and lchild.value is not NULL and rchild.value is not NULL and lchild.value[1] == node.value[1] and rchild.value[1] == node.value[1] :
-            node.value = [minML([lchild,rchild]),node.value[1]] #Update the maxLength of the parent.
-            lchild.show = False #Hide this node in the tree
-            rchild.show = False #Hide this node in the tree
+        if lchild is not None and node.value is not NULL and rchild is not None and lchild.value is not NULL and rchild.value is not NULL and lchild.value[1] == node.value[1] and rchild.value[1] == node.value[1]:
+            # Update the maxLength of the parent.
+            node.value = [minML([lchild, rchild]), node.value[1],node.value[2]]
+            lchild.show = False  # Hide this node in the tree
+            rchild.show = False  # Hide this node in the tree
 
-            # In case the parent would hide a child whose children are not included in the parent's maxLength
+            # In case the parent would hide a child whose children are not
+            # included in the parent's maxLength
             if node.value[0] < lchild.value[0]:
                 lchild.show = True
             if node.value[0] < rchild.value[0]:
                 rchild.show = True
+
 
 def minML(childList):
     ''' This method should return back the min of the children maxLength'''
