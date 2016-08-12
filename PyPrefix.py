@@ -49,7 +49,8 @@ def ipReady(prefix, AS, maxLength=None):
     AS = int(AS)
     return {key: [maxLength, AS, prefix]}
 
-IPfilename = "C:\Users\OSAGGA\Documents\ROA_PyTrie\/valid_prefixes_list.csv"
+IPfilename = "C:\Users\osagg\Documents\ROA_PyTrie\/all_prefixes_list.csv"
+#IPfilename = "C:\Users\OSAGGA\Documents\ROA_PyTrie\/valid_prefixes_list.csv"
 # IPfilename = "C:\Users\OSAGGA\Documents\ROA_PyTrie\/valid_prefixes_list.csv"
 t = Trie(getDict(IPfilename))
 
