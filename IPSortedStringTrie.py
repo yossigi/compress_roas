@@ -13,26 +13,22 @@ class nodeS(node):
 class Trie(trie):
     NodeFactory = nodeS
 
-    def dec_items(self, prefix=None):
-        '''Return a list or a string of this trie's items (``(key,value)`` tuples).
+    def dec_items(self):
+        '''Return a list or a string of this trie's items "Prefix,AS").
 
-        :param prefix: If not None, return only the items associated with keys
-            prefixed by ``prefix``.
         '''
         #s = str()
         l = list()
-        for item in self.dec_iteritems(prefix):
+        for item in self.dec_iteritems():
             l += [item]
             #s += str(item) + '\n'
 
         return l
-        #return s
+        # return s
 
-    def dec_iteritems(self, prefix=None):
-        '''Return an iterator over this trie's items (``(key,value)`` tuples).
+    def dec_iteritems(self):
+        '''Return an iterator over this trie's items "Prefix,AS").
 
-        :param prefix: If not None, yield only the items associated with keys
-            prefixed by ``prefix``.
         '''
         parts = []
         append = parts.append
@@ -40,25 +36,17 @@ class Trie(trie):
         def generator(node, key_factory=self.KeyFactory, parts=parts,
                       append=append, NULL=NULL):
             if node.value is not NULL and node.show:
-                #print node.value
                 key = "Prefix: " + \
                     str(node.value[2])
                 key += '-' + str(node.value[0])
                 key += "  AS " + str(node.value[1])
-                yield key  # This is the line I changed
+                yield key
             for part, child in node.children.iteritems():
                 append(part)
                 for subresult in generator(child):
                     yield subresult
                 del parts[-1]
         node = self._root
-        if prefix is not None:
-            for part in prefix:
-                append(part)
-                node = node.children.get(part)
-                if node is None:
-                    node = self.NodeFactory()
-                    break
         return generator(node)
 
     def combine_items(self):
@@ -82,7 +70,8 @@ class Trie(trie):
         self.dfs_items(rchild)
         if lchild is not None and node.value is not NULL and rchild is not None and lchild.value is not NULL and rchild.value is not NULL and lchild.value[1] == node.value[1] and rchild.value[1] == node.value[1]:
             # Update the maxLength of the parent.
-            node.value = [minML([lchild, rchild]), node.value[1],node.value[2]]
+            node.value = [minML([lchild, rchild]),
+                          node.value[1], node.value[2]]
             lchild.show = False  # Hide this node in the tree
             rchild.show = False  # Hide this node in the tree
 
