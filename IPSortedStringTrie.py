@@ -14,20 +14,24 @@ class Trie(trie):
     NodeFactory = nodeS
 
     def dec_items(self):
-        '''Return a list or a string of this trie's items "Prefix,AS").
+        '''Return a list or a string of this trie's nodes "Prefix,AS").
 
         '''
         #s = str()
         l = list()
-        for item in self.dec_iteritems():
-            l += [item]
+        for node in self.dec_iternodes():
+            key = "Prefix: " + \
+                str(node.value[2])
+            key += '-' + str(node.value[0])
+            key += "  AS " + str(node.value[1])
+            l += [key]
             #s += str(item) + '\n'
 
         return l
         # return s
 
-    def dec_iteritems(self):
-        '''Return an iterator over this trie's items "Prefix,AS").
+    def dec_iternodes(self):
+        '''Return an iterator over this trie's nodes "Prefix,AS").
 
         '''
         parts = []
@@ -36,11 +40,7 @@ class Trie(trie):
         def generator(node, key_factory=self.KeyFactory, parts=parts,
                       append=append, NULL=NULL):
             if node.value is not NULL and node.show:
-                key = "Prefix: " + \
-                    str(node.value[2])
-                key += '-' + str(node.value[0])
-                key += "  AS " + str(node.value[1])
-                yield key
+                yield node
             for part, child in node.children.iteritems():
                 append(part)
                 for subresult in generator(child):
