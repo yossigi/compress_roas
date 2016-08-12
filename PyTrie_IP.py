@@ -10,7 +10,7 @@ from IPSortedStringTrie import Trie
 from IP_DictMaker import getDict
 
 
-IPfilename = "C:\Users\OSAGGA\Documents\ROA_PyTrie\ip_list.txt"
+IPfilename = "C:\Users\osagg\Documents\ROA_PyTrie\ip_list.txt"
 dict = getDict(IPfilename)
 t = Trie(dict)
 
@@ -42,21 +42,22 @@ def TuneKey(dkey):
         ckey = t._find(child)  # The node of each child if there exists such.
         nkey = t._find(dkey)  # The node of the inserted key.
 
-        if ckey is None or ckey.value[1] != nkey.value[1] :  # To check if the child exist's and AS's match.
+        # To check if the child exist's and AS's match.
+        if ckey is None or ckey.value[1] != nkey.value[1]:
             return
-        #ckey.
+        # ckey.
         rchildlist += [ckey]
     if len(rchildlist) == len(dchildlist):
         for child in rchildlist:
             child.show = False
         nkey.show = True
-        nkey.value = [minML(rchildlist), rchildlist[0].value[1]] # I'm just updating the maxLength of the Prefix.
+        # I'm just updating the maxLength of the Prefix.
+        nkey.value = [minML(rchildlist), rchildlist[0].value[1]]
 
 
 def Tuneall():
     for key in t:
         TuneKey(key)
-
 
 
 Tuneall()
