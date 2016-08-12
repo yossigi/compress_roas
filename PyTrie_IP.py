@@ -7,6 +7,7 @@ Created on Wed Aug 03 12:14:35 2016
 import map_functions as binTools
 from IPSortedStringTrie import Trie
 
+
 def getDict(filename):
     IPdict = dict()
     file = open(filename, 'r')
@@ -14,25 +15,26 @@ def getDict(filename):
         line = line[:-1].split(' ')
         AS = line[1]
         IP = line[2:]
-        for ip in IP :
+        for ip in IP:
             ip = ip.split('-')
             prefix = ip[0]
-            try :
+            try:
                 maxLength = ip[1]
             except IndexError:
                 maxLength = None
-            IPdict.update(ipReady(prefix, AS,maxLength))
+            IPdict.update(ipReady(prefix, AS, maxLength))
     file.close()
     return IPdict
 
-def ipReady(prefix, AS, maxLength = None):
+
+def ipReady(prefix, AS, maxLength=None):
     key = binTools.prefix_to_key(prefix)
-    if maxLength is None :
-        maxLength = len(key) - 2 #Because the '$' and v number {4,6}
+    if maxLength is None:
+        maxLength = len(key) - 2  # Because the '$' and v number {4,6}
     AS = int(AS)
     return {key: [maxLength, AS, prefix]}
 
-IPfilename = "C:\Users\osagg\Documents\ROA_PyTrie\/ip_list.txt"
+IPfilename = "C:\Users\OSAGGA\Documents\ROA_PyTrie\/roa_list.txt"
 t = Trie(getDict(IPfilename))
 
 print len(t.dec_items())
