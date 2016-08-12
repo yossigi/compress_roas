@@ -1,9 +1,7 @@
-import map_functions as binTools
-from pytrie import SortedStringTrie as trie, NULL, Node as node
-from _abcoll import Mapping
+from pytrie import StringTrie as trie, NULL, Node as node
 
 
-class NodeS(node):
+class nodeS(node):
     __slots__ = ('value', 'children', 'show')
 
     def __init__(self, value=NULL):
@@ -13,7 +11,7 @@ class NodeS(node):
 
 
 class Trie(trie):
-    NodeFactory = NodeS
+    NodeFactory = nodeS
 
     def dec_items(self, prefix=None):
         '''Return a list or a string of this trie's items (``(key,value)`` tuples).
@@ -41,9 +39,11 @@ class Trie(trie):
 
         def generator(node, key_factory=self.KeyFactory, parts=parts,
                       append=append, NULL=NULL):
-            if node.value is not NULL and node.show: #I added this extra check 'node.show' to hide the combined IP's
-                key = "Prefix: " + str(binTools.key_to_prefix(key_factory(parts))) + \
-                    '-' + str(node.value[0]) + "  AS " + str(node.value[1])
+            if node.value is not NULL and node.show :
+                key = "Prefix: " + \
+                    str(node.value[2])
+                key += '-' + str(node.value[0])
+                key += "  AS " + str(node.value[1])
                 yield key  # This is the line I changed
             for part, child in node.children.iteritems():
                 append(part)
@@ -60,83 +60,36 @@ class Trie(trie):
                     break
         return generator(node)
 
-    def update(*args, **kwds):
-        ''' D.update([E, ]**F) -> None.  Update D from mapping/iterable E and F.
-            If E present and has a .keys() method, does:     for k in E: D[k] = E[k]
-            If E present and lacks .keys() method, does:     for (k, v) in E: D[k] = v
-            In either case, this is followed by: for k, v in F.items(): D[k] = v
-        '''
-        if not args:
-            raise TypeError("descriptor 'update' of 'MutableMapping' object "
-                            "needs an argument")
-        self = args[0]
-        args = args[1:]
-        if len(args) > 1:
-            raise TypeError('update expected at most 1 arguments, got %d' %
-                            len(args))
-        if args:
-            other = args[0]
-            if isinstance(other, Mapping):
-                for key in other:
-                    self[key] = NodeS
-                    self[key].value = other[key]
-                    # The auto-generated children's
-                    dchildlist = getDefaultChild(key)
-                    rchildlist = list()  # The real children Node's from the Trie
-                    for child in dchildlist:
-                        # Check if the supposed Child is in the SubTrie under
-                        # the parent.
-                        # The node of each child if there exists such.
-                        ckey = self._find(child)
-                        # The node of the inserted key.
-                        nkey = self._find(key)
-                        # To check if the child exist's and AS's match.
+    def combine_items(self):
+        rnode = self._root.children.get('$').children.get('4')
+        self.dfs_items(rnode)
 
-                        if ckey is None:
-                            break
-                        if ckey.value is NULL:
-                            break
-                        if ckey.value[1] != nkey.value[1]:
-                            break
-                        rchildlist += [ckey]
-                    if len(rchildlist) == len(dchildlist):
+    def dfs_items(self,node):
+        #print 'This is my node : ' ,node
+        if node is None or not node.children :
+            return
 
-                        for child in rchildlist:
-                            child.show = False
+        # children = node.children.iteritems()
+        lchild = node.children.get('0')
+        #lchild = children.next()
+        # try :
+        # rchild = children.next()
+        rchild = node.children.get('1')
+        # except StopIteration:
+        #     rchild = None
 
-                        nkey.show = True
-                        # I'm just updating the maxLength of the Prefix.
-                        nkey.value = [minML(rchildlist),
-                                      rchildlist[0].value[1]]
-            elif hasattr(other, "keys"):
-                for key in other.keys():
-                    print "@@@@@@@@@@@@@2This is my IP :", binTools.key_to_prefix(key)
-                    self[key] = NodeS
-                    self[key].value = other[key]
-            else:
-                for key, value in other:
-                    print "#############This is my IP :", binTools.key_to_prefix(key)
-                    self[key] = NodeS
-                    self[key].value = other[key]
-        for key, value in kwds.items():
-            print "$$$$$$$$$$$$$$$$This is my IP :", binTools.key_to_prefix(key)
-            self[key] = NodeS
-            self[key].value = other[key]
+        self.dfs_items(lchild)
+        self.dfs_items(rchild)
+        if lchild is not None and node.value is not NULL and rchild is not None  and lchild.value is not NULL and rchild.value is not NULL and lchild.value[1] == node.value[1] and rchild.value[1] == node.value[1] :
+            node.value = [minML([lchild,rchild]),node.value[1]] #Update the maxLength of the parent.
+            lchild.show = False #Hide this node in the tree
+            rchild.show = False #Hide this node in the tree
 
-    def __getitem__(self, key):
-        node = self._find(key)
-        if node is None or node.value is NULL:
-            raise KeyError
-        return node
-
-
-def getDefaultChild(key):
-    ''' This will auto-generate the supposed children of a prefix.'''
-    l = list()
-    l += [key + '0']
-    l += [key + '1']
-    return l
-
+            # In case the parent would hide a child whose children are not included in the parent's maxLength
+            if node.value[0] < lchild.value[0]:
+                lchild.show = True
+            if node.value[0] < rchild.value[0]:
+                rchild.show = True
 
 def minML(childList):
     ''' This method should return back the min of the children maxLength'''
