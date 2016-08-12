@@ -7,6 +7,7 @@ Created on Wed Aug 03 12:14:35 2016
 import map_functions as binTools
 from IPSortedStringTrie import Trie
 
+
 def getDict(filename):
     IPdict = dict()
     file = open(filename, 'r')
@@ -32,7 +33,7 @@ def ipReady(prefix, AS, maxLength = None):
     AS = int(AS)
     return {key: [maxLength, AS, prefix]}
 
-IPfilename = "C:\Users\osagg\Documents\ROA_PyTrie\/ip_list.txt"
+IPfilename = "/home/bingo/Documents/ROA_Project/PyPrefix/roa_list.txt"
 t = Trie(getDict(IPfilename))
 
 print len(t.dec_items())
