@@ -18,12 +18,13 @@ class Trie(trie):
 
         '''
         #s = str()
-        l = list()
+        #l = list()
         for item in self.dec_iteritems():
-            l += [item]
+            print '#@!!@@#!@#' + item + '\n'
+	    #l += [item]
             #s += str(item) + '\n'
 
-        return l
+        #return l
         # return s
 
     def dec_iteritems(self):
