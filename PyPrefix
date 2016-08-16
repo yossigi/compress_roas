@@ -1,0 +1,85 @@
+#! /usr/bin/python
+#
+# $Id: scan_roas 5856 2014-05-31 18:32:19Z sra $
+"""
+Created on Wed Aug 03 12:14:35 2016
+@author: Omar Sagga
+"""
+import os
+import argparse # Copyright (C) 2014 Dragon Research Labs
+from IPSortedStringTrie import Trie
+import map_functions as binTools
+import subprocess
+
+
+def check_dir(d): # Copyright (C) 2014 Dragon Research Labs
+  if not os.path.isdir(d):
+    raise argparse.ArgumentTypeError("%r is not a directory" % d)
+  return d
+
+parser = argparse.ArgumentParser(description = __doc__) # Copyright (C) 2014 Dragon Research Labs
+parser.add_argument("rcynic_dir", nargs = "+", type = check_dir, # Copyright (C) 2014 Dragon Research Labs
+                     help = "rcynic authenticated output directory")
+
+args = parser.parse_args() # Copyright (C) 2014 Dragon Research Labs
+
+terminal = subprocess.Popen(['scan_roas' , args.rcynic_dir[0] ], stdout=subprocess.PIPE)
+output = terminal.communicate()[0]
+
+
+def getDict(file):
+    IPdict = dict()
+    file = file[:-1].split('\n')
+    #file = open(filename, 'r')
+    # g = file.__iter__()
+    # g.next()
+    # for line in file:
+    #     line = line[:-1].split(',')
+    #     #print 'This is the line :', line
+    #     AS = line[0]
+    #     IP = line[1]
+    #     ip = IP.split('-')
+    #     prefix = ip[0]
+    #     try:
+    #         maxLength = ip[1]
+    #     except IndexError:
+    #         maxLength = None
+    #     #print prefix,AS,maxLength
+    #     IPdict.update(ipReady(prefix, AS, maxLength))
+
+    for line in file:
+        line = line.split(' ')
+        Time = line[0]
+        AS = line[1]
+        IP = line[2:]
+        for ip in IP:
+            ip = ip.split('-')
+            prefix = ip[0]
+            try:
+                maxLength = int(ip[1])
+            except IndexError:
+                maxLength = '$'
+            IPdict.update(ipReady(Time, AS,prefix, maxLength))
+    return IPdict
+
+
+def ipReady(Time,AS,prefix, maxLength):
+    key = binTools.prefix_to_key(prefix)
+    if maxLength is '$':
+        maxLength = len(key) - 2  # Because the '$' and v number {4,6}
+    AS = int(AS)
+    return {key: [Time, AS, prefix, maxLength]}
+
+#IPfilename = "C:\Users\OSAGGA\Documents\ROA_PyTrie\/valid_prefixes_list.csv"
+# IPfilename = "C:\Users\OSAGGA\Documents\ROA_PyTrie\/valid_prefixes_list.csv"
+t = Trie(getDict(output))
+
+t.combine_items()
+t.dec_items()
+# before = t.dec_items()
+# after = t.dec_items()
+# diff= len(before) - len(after)
+# p = float(diff/float(len(before))) * 100.0
+# print len(before)
+# print len(after)
+# print p,'%'
