@@ -18,19 +18,10 @@ class Trie(trie):
         '''Return a list or a string of this trie's nodes "Prefix,AS").
 
         '''
-        #s = str()
-        #l = list()
         for node in self.dec_iternodes():
-            # key = str(node.value[0])        #Timestamp
-            # key += str(node.value[1])       #AS
-            # key += str(node.value[2]) #prefix
-            # key += '-' + str(node.value[3])
             print str(node.value[0]), str(node.value[1]), str(node.value[2]) + '-' + str(node.value[3])
-            #s += str(item) + '\n'
 
         return
-        # retrun l
-        # return s
 
     def dec_iternodes(self):
         '''Return an iterator over this trie's nodes "Prefix,AS").
@@ -56,7 +47,6 @@ class Trie(trie):
         self.dfs_items(rnode)
 
     def dfs_items(self, node):
-        # print 'This is my node : ' ,node
         if node is None or not node.children:
             return
 
