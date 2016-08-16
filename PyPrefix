@@ -30,23 +30,6 @@ output = terminal.communicate()[0]
 def getDict(file):
     IPdict = dict()
     file = file[:-1].split('\n')
-    #file = open(filename, 'r')
-    # g = file.__iter__()
-    # g.next()
-    # for line in file:
-    #     line = line[:-1].split(',')
-    #     #print 'This is the line :', line
-    #     AS = line[0]
-    #     IP = line[1]
-    #     ip = IP.split('-')
-    #     prefix = ip[0]
-    #     try:
-    #         maxLength = ip[1]
-    #     except IndexError:
-    #         maxLength = None
-    #     #print prefix,AS,maxLength
-    #     IPdict.update(ipReady(prefix, AS, maxLength))
-
     for line in file:
         line = line.split(' ')
         Time = line[0]
@@ -70,16 +53,7 @@ def ipReady(Time,AS,prefix, maxLength):
     AS = int(AS)
     return {key: [Time, AS, prefix, maxLength]}
 
-#IPfilename = "C:\Users\OSAGGA\Documents\ROA_PyTrie\/valid_prefixes_list.csv"
-# IPfilename = "C:\Users\OSAGGA\Documents\ROA_PyTrie\/valid_prefixes_list.csv"
 t = Trie(getDict(output))
 
 t.combine_items()
 t.dec_items()
-# before = t.dec_items()
-# after = t.dec_items()
-# diff= len(before) - len(after)
-# p = float(diff/float(len(before))) * 100.0
-# print len(before)
-# print len(after)
-# print p,'%'
