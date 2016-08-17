@@ -1,4 +1,4 @@
-from pytrie import StringTrie as trie, NULL, Node as node
+from pytrie import SortedStringTrie as trie, NULL, Node as node
 
 
 class nodeS(node):
@@ -17,18 +17,16 @@ class Trie(trie):
         '''Return a list or a string of this trie's nodes "Prefix,AS").
 
         '''
-        #s = str()
         l = list()
         for node in self.dec_iternodes():
-            key = "Prefix: " + \
-                str(node.value[2])
-            key += '-' + str(node.value[0])
-            key += "  AS " + str(node.value[1])
-            l += [key]
-            #s += str(item) + '\n'
+            for AS in node.value[1]:
+                key = "Prefix: " + \
+                    str(node.value[2])
+                key += '-' + str(node.value[0])
+                key += "  AS " + str(AS)
+                l += [key]
 
         return l
-        # return s
 
     def dec_iternodes(self):
         '''Return an iterator over this trie's nodes "Prefix,AS").
