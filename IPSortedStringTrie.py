@@ -19,13 +19,9 @@ class Trie(trie):
         '''
         l = list()
         for node in self.dec_iternodes():
-            for AS in node.value[1]:
-                key = "Prefix: " + \
-                    str(node.value[2])
-                key += '-' + str(node.value[0])
-                key += "  AS " + str(AS)
-                l += [key]
-
+            for i in range(len(node.value[1])):
+                s = str(node.value[0][i]) + ' ' +  str(node.value[1][i]) + ' ' + str(node.value[2]) + '-' + str(node.value[3][i])
+                l += [s]
         return l
 
     def dec_iternodes(self):
@@ -68,8 +64,7 @@ class Trie(trie):
         self.dfs_items(rchild)
         if lchild is not None and node.value is not NULL and rchild is not None and lchild.value is not NULL and rchild.value is not NULL and lchild.value[1] == node.value[1] and rchild.value[1] == node.value[1]:
             # Update the maxLength of the parent.
-            node.value = [minML([lchild, rchild]),
-                          node.value[1], node.value[2]]
+            node.value = [node.value[0], node.value[1], node.value[2], minML([lchild, rchild])]
             lchild.show = False  # Hide this node in the tree
             rchild.show = False  # Hide this node in the tree
 
@@ -85,5 +80,5 @@ def minML(childList):
     ''' This method should return back the min of the children maxLength'''
     numlist = list()
     for child in childList:
-        numlist += [child.value[0]]  # Add the MaxLength to the list
+        numlist += [child.value[3]]  # Add the MaxLength to the list
     return min(numlist)
