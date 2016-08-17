@@ -19,8 +19,8 @@ class Trie(trie):
 
         '''
         for node in self.dec_iternodes():
-            print str(node.value[0]), str(node.value[1]), str(node.value[2]) + '-' + str(node.value[3])
-
+            for i in range(len(node.value[1])):
+                print str(node.value[0][i]), str(node.value[1][i]) , str(node.value[2]) + '-' + str(node.value[3][i])
         return
 
     def dec_iternodes(self):

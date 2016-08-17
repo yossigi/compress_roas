@@ -6,7 +6,7 @@ Created on Wed Aug 03 12:14:35 2016
 @author: Omar Sagga
 """
 import os
-import argparse # Copyright (C) 2014 Dragon Research Labs
+import argparse
 from IPSortedStringTrie import Trie
 import map_functions as binTools
 import subprocess
@@ -27,33 +27,35 @@ terminal = subprocess.Popen(['scan_roas' , args.rcynic_dir[0] ], stdout=subproce
 output = terminal.communicate()[0]
 
 
-def getDict(file):
+def getDict(output):
     IPdict = dict()
-    file = file[:-1].split('\n')
-    for line in file:
+    output = output[:-1].split('\n')
+    for line in output:
         line = line.split(' ')
         Time = line[0]
-        AS = line[1]
+        AS = int(line[1])
         IP = line[2:]
         for ip in IP:
             ip = ip.split('-')
             prefix = ip[0]
+            key = binTools.prefix_to_key(prefix)
             try:
                 maxLength = int(ip[1])
             except IndexError:
-                maxLength = '$'
-            IPdict.update(ipReady(Time, AS,prefix, maxLength))
+                maxLength = len(key) - 2  # Because the '$' and v number {4,6}
+
+            if key in IPdict:
+              IPdict[key] = [IPdict[key][0] + [Time], IPdict[key][1] + [AS], prefix, IPdict[key][3] + [maxLength]]
+            else:
+		          IPdict.update(ipReady(Time,AS, prefix, maxLength,key))
+
     return IPdict
 
 
-def ipReady(Time,AS,prefix, maxLength):
-    key = binTools.prefix_to_key(prefix)
-    if maxLength is '$':
-        maxLength = len(key) - 2  # Because the '$' and v number {4,6}
-    AS = int(AS)
-    return {key: [Time, AS, prefix, maxLength]}
+def ipReady(Time,AS,prefix, maxLength,key):
+    return {key: [[Time], [AS], prefix, [maxLength]]}
 
 t = Trie(getDict(output))
 
-t.combine_items()
+#t.combine_items()
 t.dec_items()
