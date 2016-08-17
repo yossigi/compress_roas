@@ -40,7 +40,7 @@ class Trie(trie):
         def generator(node, key_factory=self.KeyFactory, parts=parts,
                       append=append, NULL=NULL):
             if node.value is not NULL and node.show:
-                yield node
+                yield node # I outputted the whole node so that I can get all the info from it.
             for part, child in node.children.iteritems():
                 append(part)
                 for subresult in generator(child):

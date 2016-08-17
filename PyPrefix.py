@@ -26,18 +26,7 @@ def getDict(filename):
             maxLength = None
         #print prefix,AS,maxLength
         IPdict.update(ipReady(prefix, AS, maxLength))
-    # for line in file:
-    #     line = line[:-1].split(' ')
-    #     AS = line[1]
-    #     IP = line[2:]
-    #     for ip in IP:
-    #         ip = ip.split('-')
-    #         prefix = ip[0]
-    #         try:
-    #             maxLength = ip[1]
-    #         except IndexError:
-    #             maxLength = None
-    #         IPdict.update(ipReady(prefix, AS, maxLength))
+
     file.close()
     return IPdict
 
@@ -61,4 +50,7 @@ diff= len(before) - len(after)
 p = float(diff/float(len(before))) * 100.0
 print len(before)
 print len(after)
+print 'Diff:', len(before) - len(after)
 print p,'%'
+
+#In use :)
