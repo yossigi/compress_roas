@@ -1,7 +1,7 @@
 import netaddr
 
 
-def prefix_to_key(prefix):
+def prefix_to_key(prefix,AS):
     prefix = netaddr.IPNetwork(prefix)
     #print prefix.version
     address = prefix.ip.bits().replace(".", "").replace(":","")
@@ -9,12 +9,12 @@ def prefix_to_key(prefix):
     while(l > 0):
         address = address[:-1]
         l >>= 1
-    return '$' + str(prefix.version) + address
+    return '$' + str(prefix.version) + bin(AS) + address
 
 
 def key_to_prefix(key):
     v = int(key[1])
-    k = key[2:]
+    k = key[2:].split('#')[1]
     l = len(k)
     i = 0
     j = 0
