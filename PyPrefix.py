@@ -27,7 +27,10 @@ def getDictCSV(filename):
             maxLength = int(ip[1])
         except IndexError:
             maxLength = len(key) - 2 - len(bin(AS)) # Because the '$' and v number {4,6}
-        IPdict.update(ipReady(Time,AS, prefix, maxLength,key))
+        if key in IPdict:
+            IPdict[key] = [Time,AS,prefix,max(maxLength,IPdict[key][3])]
+        else:
+            IPdict.update(ipReady(Time,AS, prefix, maxLength,key))
 
     file.close()
     print 'Number of lines is:', i
@@ -39,8 +42,8 @@ def getDictTXT(filename):
     i = 0
     dub = list()
     for line in file:
-        line = line.split(' ')
-        Time = line[0]
+        line = line[:-1].split(' ')
+        Time = ''
         AS = int(line[1])
         IP = line[2:]
         for ip in IP:
@@ -51,14 +54,14 @@ def getDictTXT(filename):
             try:
                 maxLength = int(ip[1])
             except IndexError:
-                maxLength = len(key) - 2 - len(bin(AS)) # Because the '$' and v number {4,6}
+                maxLength = len(key) - 3 - len(bin(AS)) # Because the '$' and v number {4,6} and '?' and AS
             if key in IPdict:
-                dub += [prefix]
+                IPdict[key] = [Time,AS,prefix,max(maxLength,IPdict[key][3])]
             else:
                 IPdict.update(ipReady(Time,AS, prefix, maxLength,key))
 
-    print 'Number of lines is:', i
-    print len(dub)
+    # print 'Number of lines is:', i
+    #print len(dub)
     file.close()
     return IPdict
 
@@ -66,14 +69,15 @@ def ipReady(Time,AS,prefix, maxLength,key):
     return {key: [Time, AS, prefix, maxLength]}
 
 
-#IPfilenameCSV = "C:\Users\OSAGGA\Documents\ROA_PyTrie\/valid_prefixes_list.csv"
-IPfilenameCSV = "C:\Users\osagg\Documents\ROA_PyTrie\/valid_prefixes_list.csv"
-#IPfilenameTXT = "C:\Users\OSAGGA\Documents\ROA_PyTrie\/roa_list.txt"
-IPfilenameTXT = "C:\Users\osagg\Documents\ROA_PyTrie\/roa_list.txt"
+# IPfilenameCSV = "C:\Users\OSAGGA\Documents\ROA_PyTrie\/valid_prefixes_list.csv"
+# IPfilenameCSV = "C:\Users\OSAGGA\Documents\ROA_PyTrie\/test.csv"
+# IPfilenameCSV = "C:\Users\osagg\Documents\ROA_PyTrie\/valid_prefixes_list.csv"
+IPfilenameTXT = "C:\Users\OSAGGA\Documents\ROA_PyTrie\/roa_list.txt"
+# IPfilenameTXT = "C:\Users\osagg\Documents\ROA_PyTrie\/roa_list.txt"
 
 
-t = Trie(getDictCSV(IPfilenameCSV))
-# t = Trie(getDictTXT(IPfilenameTXT))
+# t = Trie(getDictCSV(IPfilenameCSV))
+t = Trie(getDictTXT(IPfilenameTXT))
 
 before = t.dec_items()
 
@@ -83,7 +87,10 @@ t.combine_items()
 after = t.dec_items()
 diff = len(before) - len(after)
 p = float(diff / float(len(before))) * 100.0
+
+# print 'All-Before:',before
+# print 'All-After:',after
+
 print len(before)
 print len(after)
 print p, '%'
-# print after

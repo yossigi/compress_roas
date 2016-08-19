@@ -8,7 +8,8 @@ class nodeS(node):
         self.value = value
         self.children = self.ChildrenFactory()
         self.show = True
-
+    def __repr__(self):
+        return str(self.value[0]) + ' ' +  str(self.value[1]) + ' ' + str(self.value[2]) + '-' + str(self.value[3])
 
 class Trie(trie):
     NodeFactory = nodeS
@@ -19,8 +20,7 @@ class Trie(trie):
         '''
         l = list()
         for node in self.dec_iternodes():
-            s = str(node.value[0]) + ' ' +  str(node.value[1]) + ' ' + str(node.value[2]) + '-' + str(node.value[3])
-            l += [s]
+            l += [node]
         return l
 
     def dec_iternodes(self):
@@ -62,18 +62,27 @@ class Trie(trie):
         self.dfs_items(lchild)
         self.dfs_items(rchild)
         if lchild is not None and node.value is not NULL and rchild is not None and lchild.value is not NULL and rchild.value is not NULL:
-            # Update the maxLength of the parent.
-            node.value = [node.value[0], node.value[1], node.value[2], minML([lchild, rchild])]
-            lchild.show = False  # Hide this node in the tree
-            rchild.show = False  # Hide this node in the tree
+            # print 'Before: ' + str([node,lchild,rchild])
+            if node.value[3] >= maxML([lchild, rchild]):
+                pass
+            else:
+                node.value = [node.value[0], node.value[1], node.value[2], minML([lchild, rchild])]
 
+            if node.value[3] >= lchild.value[3]:
+                lchild.show = False
+            if node.value[3] >= rchild.value[3]:
+                rchild.show = False
+
+            # Update the maxLength of the parent.
             # In case the parent would hide a child whose children are not
             # included in the parent's maxLength
-            if node.value[0] < lchild.value[0]:
-                lchild.show = True
-            if node.value[0] < rchild.value[0]:
-                rchild.show = True
+            aftrlist = [node]
+            if lchild.show :
+                aftrlist += [lchild]
+            if rchild.show :
+                aftrlist += [rchild]
 
+            # print 'After: ' + str(aftrlist) + '\n'
 
 def minML(childList):
     ''' This method should return back the min of the children maxLength'''
@@ -81,3 +90,10 @@ def minML(childList):
     for child in childList:
         numlist += [child.value[3]]  # Add the MaxLength to the list
     return min(numlist)
+
+def maxML(childList):
+    ''' This method should return back the min of the children maxLength'''
+    numlist = list()
+    for child in childList:
+        numlist += [child.value[3]]  # Add the MaxLength to the list
+    return max(numlist)
