@@ -11,7 +11,7 @@ def prefix_to_key(prefix, AS):
         address = address[:-1]
         l >>= 1
     if prefix.version == 4:
-	return return '$' + str(0) + bin(AS) + '$' +  address
+	return '$' + str(0) + bin(AS) + '$' +  address
     elif prefix.version == 6:
 	return '$' + str(1) + bin(AS) + '$' +  address
 
