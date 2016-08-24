@@ -38,24 +38,23 @@ def getDict(output):
         for ip in IP:
             ip = ip.split('-')
             prefix = ip[0]
-            key = binTools.prefix_to_key(prefix)
+            key = binTools.prefix_to_key(prefix, AS)
             try:
                 maxLength = int(ip[1])
             except IndexError:
-                maxLength = len(key) - 2  # Because the '$' and v number {4,6}
-
+                maxLength = len(key) - 3 - len(bin(AS)) # Because the '$' and v number {4,6} and '?' and AS
             if key in IPdict:
-              IPdict[key] = [IPdict[key][0] + [Time], IPdict[key][1] + [AS], prefix, IPdict[key][3] + [maxLength]]
+                IPdict[key] = [Time,AS,prefix,max(maxLength,IPdict[key][3])]
             else:
-		          IPdict.update(ipReady(Time,AS, prefix, maxLength,key))
+                IPdict.update(ipReady(Time,AS, prefix, maxLength,key))
 
     return IPdict
 
 
 def ipReady(Time,AS,prefix, maxLength,key):
-    return {key: [[Time], [AS], prefix, [maxLength]]}
+    return {key: [Time, AS, prefix, maxLength]}
 
 t = Trie(getDict(output))
 
-#t.combine_items()
+# t.combine_items()
 t.dec_items()

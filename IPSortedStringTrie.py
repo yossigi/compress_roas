@@ -10,21 +10,22 @@ class nodeS(node):
         self.children = self.ChildrenFactory()
         self.show = True
 
+    def __repr__(self):
+        return str(self.value[0]) + ' ' + str(self.value[1]) + ' ' + str(self.value[2]) + '-' + str(self.value[3])
+
 
 class Trie(trie):
     NodeFactory = nodeS
 
     def dec_items(self):
         '''Return a list or a string of this trie's nodes "Prefix,AS").
-
         '''
         for node in self.dec_iternodes():
-            for i in range(len(node.value[1])):
-                print str(node.value[0][i]), str(node.value[1][i]) , str(node.value[2]) + '-' + str(node.value[3][i])
+            print node
         return
 
     def dec_iternodes(self):
-        '''Return an iterator over this trie's nodes "Prefix,AS").
+        '''Return an iterator over this trie's nodes).
 
         '''
         parts = []
@@ -60,18 +61,16 @@ class Trie(trie):
 
         self.dfs_items(lchild)
         self.dfs_items(rchild)
-        if lchild is not None and node.value is not NULL and rchild is not None and lchild.value is not NULL and rchild.value is not NULL and lchild.value[1] == node.value[1] and rchild.value[1] == node.value[1]:
-            # Update the maxLength of the parent.
-            node.value = [node.value[0], node.value[1], node.value[2], minML([lchild, rchild])]
-            lchild.show = False  # Hide this node in the tree
-            rchild.show = False  # Hide this node in the tree
+        if lchild is not None and node.value is not NULL and rchild is not None and lchild.value is not NULL and rchild.value is not NULL:
+            if node.value[3] >= maxML([lchild, rchild]):
+                pass
+            else:
+                node.value = [node.value[0], node.value[1], node.value[2], minML([lchild, rchild])]
 
-            # In case the parent would hide a child whose children are not
-            # included in the parent's maxLength
-            if node.value[0] < lchild.value[0]:
-                lchild.show = True
-            if node.value[0] < rchild.value[0]:
-                rchild.show = True
+            if node.value[3] >= lchild.value[3]:
+                lchild.show = False
+            if node.value[3] >= rchild.value[3]:
+                rchild.show = False
 
 
 def minML(childList):
@@ -80,3 +79,10 @@ def minML(childList):
     for child in childList:
         numlist += [child.value[3]]  # Add the MaxLength to the list
     return min(numlist)
+
+def maxML(childList):
+    ''' This method should return back the min of the children maxLength'''
+    numlist = list()
+    for child in childList:
+        numlist += [child.value[3]]  # Add the MaxLength to the list
+    return max(numlist)
