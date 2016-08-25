@@ -1,6 +1,7 @@
+# compress-roas
 A python script that wade through the ROAs that rcynic collects and compress it and then output [Time] [ASN] [IP_Prefix] [maxLength] per line of all the result data.
 
-How to use:
+# How to use:
 
 if by it's own just to print out the data commpressed:
   compress-roas [roa-directory]
