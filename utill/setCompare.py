@@ -1,3 +1,6 @@
+''' Just to compare two sets of data. '''
+
+
 def readfile(filename):
     s = set()
     file = open(filename,'r')
@@ -8,8 +11,11 @@ def readfile(filename):
         s.add (st)
     return s
 
-s1 = readfile('C:\Users\OSAGGA\Documents\ROA_PyTrie\/test2\/normal_scanner_output.txt')
-s2 = readfile('C:\Users\OSAGGA\Documents\ROA_PyTrie\/test2\/Py_prefix_normal.txt')
+Filename1 = ''
+Filename2 = ''
+s1 = readfile(Filename1)
+s2 = readfile(Filename2)
+
 print len(s1)
 print len(s2)
 
