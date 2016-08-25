@@ -8,12 +8,12 @@ import subprocess
 
 
 def check_dir(d):
-  if !os.path.isdir(d):
+  if not os.path.isdir(d):
     raise argparse.ArgumentTypeError("%r is not a directory" % d)
   return d
 
 parser = argparse.ArgumentParser(description ="Scan for ROA's and compress them")
-parser.add_argument("rcynic_dir", nargs = "1", type = check_dir,
+parser.add_argument("rcynic_dir", nargs = "+", type = check_dir,
                      help = "rcynic authenticated output directory")
 
 args = parser.parse_args()
@@ -24,9 +24,9 @@ output = terminal.communicate()[0]
 
 def getROA(output):
     IPdict = dict()
-    output = output.split('\n')
+    output = output[:-1].split('\n')
     for line in output:
-        line = line[:-1].split(' ')
+        line = line.split(' ')
         Time = line[0]
         AS = int(line[1])
         IP = line[2:]
@@ -48,7 +48,7 @@ def getROA(output):
 
 def ipReady(Time,AS,prefix, maxLength,key):
   ''' Return a dictionary object of the input '''
-    return {key: [Time, AS, prefix, maxLength]}
+  return {key: [Time, AS, prefix, maxLength]}
 
 t = Trie(getROA(output)) #To generate the dictionary as an input to the Trie.
 t.combine_items() # Compress the data in the Trie.
