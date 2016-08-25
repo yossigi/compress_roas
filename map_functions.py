@@ -9,7 +9,10 @@ def prefix_to_key(prefix,AS):
     while(l > 0):
         address = address[:-1]
         l >>= 1
-    return '$' + str(prefix.version) + bin(AS) +'?'+ address
+    if prefix.version == 4:
+        return '$' + '0' + bin(AS) +'$'+ address
+    elif prefix.version == 6:
+        return '$' + '1' + bin(AS) +'$'+ address
 
 
 def key_to_prefix(key):

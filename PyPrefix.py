@@ -12,19 +12,20 @@ def getDictCSV(filename):
     IPdict = dict()
     i = 0
     file = open(filename, 'r')
-    g = file.__iter__()
-    g.next()
+    # g = file.__iter__()
+    # g.next()
     for line in file:
-        i += 1
+        # i += 1
         line = line[:-1].split(',')
-        AS = int(line[0])
-        IP = line[1]
+        AS = int(line[1])
+        IP = line[0]
         Time = '13:37'
         ip = IP.split('-')
         prefix = ip[0]
         key = binTools.prefix_to_key(prefix,AS)
         try:
             maxLength = int(ip[1])
+            # maxLength = 24
         except IndexError:
             maxLength = len(key) - 2 - len(bin(AS)) # Because the '$' and v number {4,6}
         if key in IPdict:
@@ -33,14 +34,15 @@ def getDictCSV(filename):
             IPdict.update(ipReady(Time,AS, prefix, maxLength,key))
 
     file.close()
-    print 'Number of lines is:', i
+    # print 'Number of lines is:', i
     return IPdict
 
 def getDictTXT(filename):
     IPdict = dict()
     file = open(filename, 'r')
     i = 0
-    dub = list()
+    full_dub = list()
+    semi_dub = list()
     for line in file:
         line = line[:-1].split(' ')
         Time = ''
@@ -56,12 +58,23 @@ def getDictTXT(filename):
             except IndexError:
                 maxLength = len(key) - 3 - len(bin(AS)) # Because the '$' and v number {4,6} and '?' and AS
             if key in IPdict:
+                if maxLength == IPdict[key][3]:
+                    full_dub += ["prefix: " + str(prefix) + " AS: " + str(AS) + " maxLength: " + str(maxLength)]
+                else:
+                    semi_dub += ["@prefix: " + str(prefix) + " AS: " + str(AS) + " maxLength: " + str(maxLength)]
                 IPdict[key] = [Time,AS,prefix,max(maxLength,IPdict[key][3])]
             else:
                 IPdict.update(ipReady(Time,AS, prefix, maxLength,key))
 
-    # print 'Number of lines is:', i
-    #print len(dub)
+    print 'Number of lines is:', i
+    for ip in full_dub:
+        print ip
+    for ip in semi_dub:
+        print ip
+    # print full_dub
+    # print semi_dub
+    print len(full_dub)
+    print len(semi_dub)
     file.close()
     return IPdict
 
@@ -69,10 +82,10 @@ def ipReady(Time,AS,prefix, maxLength,key):
     return {key: [Time, AS, prefix, maxLength]}
 
 
-# IPfilenameCSV = "C:\Users\OSAGGA\Documents\ROA_PyTrie\/valid_prefixes_list.csv"
+# IPfilenameCSV = "C:\Users\OSAGGA\Documents\ROA_PyTrie\/ipv4_bgp_announcements.csv"
 # IPfilenameCSV = "C:\Users\OSAGGA\Documents\ROA_PyTrie\/test.csv"
 # IPfilenameCSV = "C:\Users\osagg\Documents\ROA_PyTrie\/valid_prefixes_list.csv"
-IPfilenameTXT = "C:\Users\OSAGGA\Documents\ROA_PyTrie\/roa_list.txt"
+IPfilenameTXT = "C:\Users\OSAGGA\Documents\ROA_PyTrie\/roa_list_new.txt"
 # IPfilenameTXT = "C:\Users\osagg\Documents\ROA_PyTrie\/roa_list.txt"
 
 
@@ -81,14 +94,16 @@ t = Trie(getDictTXT(IPfilenameTXT))
 
 before = t.dec_items()
 
+# print 'All-Before:',before + '\n'
 # Here I do the minimizing of the ROA's
 t.combine_items()
 
 after = t.dec_items()
+
 diff = len(before) - len(after)
 p = float(diff / float(len(before))) * 100.0
 
-# print 'All-Before:',before
+
 # print 'All-After:',after
 
 print len(before)
