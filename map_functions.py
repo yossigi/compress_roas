@@ -18,7 +18,7 @@ def prefix_to_key(prefix, AS):
 
 def key_to_prefix(key):
     v = int(key[1])
-    k = key[2:].split('#')[1]
+    k = key.split('$')[2]
     l = len(k)
     i = 0
     j = 0
@@ -26,6 +26,9 @@ def key_to_prefix(key):
         i <<= 1
         i += int(c)
         j += 1
-    i <<= (2**(v+1) - j)
+    if v == 0 :
+    	i <<= (32 - j)
+    elif v == 1:
+    	i <<= (128 - j)
     ip = netaddr.IPAddress(i)
     return netaddr.IPNetwork(str(ip) + "/" + str(l))
