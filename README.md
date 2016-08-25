@@ -1,4 +1,4 @@
-# compress-roas
+# compress-roas for RPKI-rtr
 A python script that wade through the ROAs that rcynic collects and compress it and then output:
 
   [Time] [ASN] [IP_Prefix] [maxLength]
