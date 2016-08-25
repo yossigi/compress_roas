@@ -1,5 +1,6 @@
 import netaddr
 
+'''This program genarates a list of all the possible IP prefix's to a limit of your choice. '''
 def key_to_prefix(key):
     k = key
     l = len(k)
@@ -25,10 +26,12 @@ def recursive(prefix,length):
         recursive(prefix+'0',length - 1)
         recursive(prefix+'1',length - 1)
 
+Filename = 'Where\to\save\the\output\'
 
-open('C:\Users\OSAGGA\Documents\ROA_PyTrie\/test.csv','w').close()
-f = open('C:\Users\OSAGGA\Documents\ROA_PyTrie\/test.csv','w')
-f.write('asn,prefix\n')
-recursive('', 16)
+open('Filename','w').close() # to reset the file everytime you run the code.
+f = open(Filename,'w')
+f.write('asn,prefix\n') # The first line, you can delete this if not needed.
+prefix_limit = 16 # The limit to stop after reaching.
+recursive('', prefix_limit)
 f.close()
 print 'Done!'
