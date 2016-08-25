@@ -85,7 +85,7 @@ def ipReady(Time,AS,prefix, maxLength,key):
 # IPfilenameCSV = "C:\Users\OSAGGA\Documents\ROA_PyTrie\/ipv4_bgp_announcements.csv"
 # IPfilenameCSV = "C:\Users\OSAGGA\Documents\ROA_PyTrie\/test.csv"
 # IPfilenameCSV = "C:\Users\osagg\Documents\ROA_PyTrie\/valid_prefixes_list.csv"
-IPfilenameTXT = "C:\Users\OSAGGA\Documents\ROA_PyTrie\/roa_list_new.txt"
+IPfilenameTXT = "C:\Users\OSAGGA\Documents\ROA_PyTrie\Output files\/roa_list_new.txt"
 # IPfilenameTXT = "C:\Users\osagg\Documents\ROA_PyTrie\/roa_list.txt"
 
 
