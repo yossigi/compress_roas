@@ -1,4 +1,5 @@
-from pytrie import SortedStringTrie as trie, NULL, Node as node
+#! /usr/bin/python
+from pytrie import StringTrie as trie, NULL, Node as node
 
 
 class nodeS(node):
@@ -8,23 +9,23 @@ class nodeS(node):
         self.value = value
         self.children = self.ChildrenFactory()
         self.show = True
+
     def __repr__(self):
-        return str(self.value[0]) + ' ' +  str(self.value[1]) + ' ' + str(self.value[2]) + '-' + str(self.value[3])
+        return str(self.value[0]) + ' ' + str(self.value[1]) + ' ' + str(self.value[2]) + '-' + str(self.value[3])
+
 
 class Trie(trie):
     NodeFactory = nodeS
 
     def dec_items(self):
         '''Return a list or a string of this trie's nodes "Prefix,AS").
-
         '''
-        l = list()
         for node in self.dec_iternodes():
-            l += [node]
-        return l
+            print node
+        return
 
     def dec_iternodes(self):
-        '''Return an iterator over this trie's nodes "Prefix,AS").
+        '''Return an iterator over this trie's nodes).
 
         '''
         parts = []
@@ -33,7 +34,7 @@ class Trie(trie):
         def generator(node, key_factory=self.KeyFactory, parts=parts,
                       append=append, NULL=NULL):
             if node.value is not NULL and node.show:
-                yield node # I outputted the whole node so that I can get all the info from it.
+                yield node
             for part, child in node.children.iteritems():
                 append(part)
                 for subresult in generator(child):
@@ -47,64 +48,40 @@ class Trie(trie):
         self.dfs_items(rnode)
 
     def dfs_items(self, node):
-        # print 'This is my node : ' ,node
-
         if node is None or not node.children:
-            # When you reach a leaf node, just stop.
             return
 
         g = node.children.iteritems()
 
-        # To get pointers on the children nodes.
-        fchild = node.children.get(str(g.next()[0]))
+        lchild = node.children.get(str(g.next()[0]))
         try:
-            schild = node.children.get(str(g.next()[0]))
-        # in case a second child doesn't exist.
+            rchild = node.children.get(str(g.next()[0]))
         except StopIteration:
-            schild = None
+            rchild = None
 
-        # The recursive call to reach the end of the Trie.
-        self.dfs_items(fchild)
-        self.dfs_items(schild)
-
-        # Check if the node is an prefix (not just a connecting node) and that 2 children exist with prefix's and value's
-        if node.value is not NULL and fchild.value is not NULL and schild is not None and schild.value is not NULL:
-            # print 'Before: ' + str([node,fchild,schild]) # Just for debugging.
-
-            # To check if the maxLength of the parent is higher or equal to the max(children's  maxLength)
-            if node.value[3] >= maxML([fchild, schild]):
+        self.dfs_items(lchild)
+        self.dfs_items(rchild)
+        if lchild is not None and node.value is not NULL and rchild is not None and lchild.value is not NULL and rchild.value is not NULL:
+            if node.value[3] >= maxML([lchild, rchild]):
                 pass
             else:
-                # Only update the max length of the parent if it's less than the max of children
-                node.value = [node.value[0], node.value[1], node.value[2], minML([fchild, schild])]
+                node.value = [node.value[0], node.value[1], node.value[2], minML([lchild, rchild])]
 
-            # Only hide a child if the parent's max length is covering the child's max length
-            if node.value[3] >= fchild.value[3]:
-                fchild.show = False
+            if node.value[3] >= lchild.value[3]:
+                lchild.show = False
+            if node.value[3] >= rchild.value[3]:
+                rchild.show = False
 
-            # Only hide a child if the parent's max length is covering the child's max length
-            if node.value[3] >= schild.value[3]:
-                schild.show = False
-
-
-            # This is just for debugging.
-            aftrlist = [node]
-            if fchild.show :
-                aftrlist += [fchild]
-            if schild.show :
-                aftrlist += [schild]
-
-            # print 'After: ' + str(aftrlist) + '\n'
 
 def minML(childList):
-    ''' This method should return back the min of the children's maxLength'''
+    ''' This method should return back the min of the children maxLength'''
     numlist = list()
     for child in childList:
         numlist += [child.value[3]]  # Add the MaxLength to the list
     return min(numlist)
 
 def maxML(childList):
-    ''' This method should return back the max of the children's maxLength'''
+    ''' This method should return back the min of the children maxLength'''
     numlist = list()
     for child in childList:
         numlist += [child.value[3]]  # Add the MaxLength to the list
