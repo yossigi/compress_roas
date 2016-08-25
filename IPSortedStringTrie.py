@@ -18,10 +18,8 @@ class Trie(trie):
         '''Return a list or a string of this trie's nodes "Prefix,AS").
 
         '''
-        l = list()
         for node in self.dec_iternodes():
-            l += [node]
-        return l
+            print node
 
     def dec_iternodes(self):
         '''Return an iterator over this trie's nodes "Prefix,AS").
