@@ -1,0 +1,91 @@
+#! /usr/bin/python
+
+import subprocess
+import argparse
+import time
+import datetime
+import os
+
+
+parser = argparse.ArgumentParser(description ="Generate and sign the roa_Request for the router.")
+parser.add_argument("BGP_Config_dir", nargs = "+",
+                     help = "BGP Config file directory")
+parser.add_argument("privatekey_dir", nargs = "+",
+                     help = "Private key (for signing the request) directory")
+args = parser.parse_args()
+
+def readfile(filename):
+    ''' Extract the ASN and prefix's for a BGP config file '''
+    BGPConf = open(filename,'r')
+    # A set to add prefixs to.
+    prefixSet = set()
+    ASN = 0
+    for line in BGPConf:
+        line = line[:-1].split()
+        if 'router' in line and 'bgp' in line:
+            # The AS is always in this line "router bgp [ASN]"
+            ASN = line[2]
+        elif 'network' in line and line[0] is not '!':
+            # prefix's are usually within a line that starts with 'network' as in "network 10.1.1.0/24"
+            # Checking for the '!' means that the announcment is not active, I assume that '!' makes a line a comment.
+            prefixSet.add(line[1])
+    BGPConf.close()
+    return [ASN,prefixSet]
+def generate_sign(privatekey_path,BGP_data):
+        AS = BGP_data[0]
+        all_prefix = ""
+        for prefix in BGP_data[1]:
+            # Building the prefix's list for the ROA request format.
+            prefix = prefix.split('/')
+            ip = prefix[0]
+            length = prefix[1]
+            all_prefix += ip + '|' + length + '||' #Assuming a maxLength wouldn't exist.
+
+        roa_name = "My First ROA"
+        time_now = str(int(time.time()))
+        roa_start_date = str(datetime.datetime.now()).split()[0]
+        roa_end_date = "mm-dd-yyyy" # Not sure Where to get this value from.
+        roa_Request = "1|" + time_now + "|" + roa_name + "|" + AS + "|" + roa_start_date + "|"+ roa_end_date+ "|" + all_prefix
+
+        roa_request = open('temp.txt','w') # A text file that contains the request to be signed.
+        roa_request.write(roa_Request)
+        roa_request.close()
+
+        privatekey =  privatekey_path # Private key location
+
+        # Signing the roa_Request with the private key.
+        process = subprocess.Popen('openssl dgst -sha256 -sign'.split()+ [privatekey] + '-keyform PEM -out signature'.split() + ['temp.txt'])
+        process.communicate() # To block the process from going further without finishing execution.
+
+        # converting the signature to Base64.
+        process = subprocess.Popen('openssl enc -base64 -in signature -out sig_base64'.split(), stdout=subprocess.PIPE)
+        process.communicate() # To block the process from going further without finishing execution.
+
+        # Bulding and wraping the contents of the ROA data and the Base64 encoded signature.
+        signature = open('sig_base64','r')
+        s = "-----BEGIN ROA REQUEST-----"+ "\n" + roa_Request + '\n' + "-----END ROA REQUEST-----" + '\n' +  "-----BEGIN SIGNATURE-----" + '\n' + signature.read() + "-----END SIGNATURE-----" + '\n'
+        data = open('roa_request.txt','w')
+        data.write(s)
+
+        # Close all open files.
+
+        signature.close()
+        data.close()
+
+        # Deleting the temp txt files and signatures
+        os.remove('temp.txt')
+        os.remove('signature')
+        os.remove('sig_base64')
+
+# BGP_Config_file = '/home/bingo/Documents/ROA_Project/utill/bgpd.conf.sample2' # BGP config file location.
+BGP_Config_file = args.BGP_Config_dir[0]
+# privatekey_path = 'orgkeypair.pem'
+privatekey_path = args.privatekey_dir[0]
+
+BGP_data = readfile(BGP_Config_file) # Getting the list of data [ASN,Prefix's]
+if len(BGP_data[1]) > 0:
+    # To make sure the router have any prefix's
+    generate_sign(privatekey_path,BGP_data)
+    print 'Done!'
+else:
+    raise argparse.ArgumentTypeError("There isn't any prefix's, can't make a ROA request!")
