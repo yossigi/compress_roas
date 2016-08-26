@@ -7,7 +7,7 @@ A python script that wade through the ROAs that rcynic collects and compress it 
 # ROA-Requester
 
 ```shell
-  roa-requester [bgp-config-directory] [privateKey-directory]
+  roa-requester [bgp-config-file-directory] [privateKey-directory]
 ```
 
 
