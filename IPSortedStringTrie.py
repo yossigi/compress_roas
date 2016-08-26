@@ -48,51 +48,61 @@ class Trie(trie):
 
     def dfs_items(self, node):
         # print 'This is my node : ' ,node
+
         if node is None or not node.children:
+            # When you reach a leaf node, just stop.
             return
 
         g = node.children.iteritems()
 
-        lchild = node.children.get(str(g.next()[0]))
+        # To get pointers on the children nodes.
+        fchild = node.children.get(str(g.next()[0]))
         try:
-            rchild = node.children.get(str(g.next()[0]))
+            schild = node.children.get(str(g.next()[0]))
+        # in case a second child doesn't exist.
         except StopIteration:
-            rchild = None
+            schild = None
 
-        self.dfs_items(lchild)
-        self.dfs_items(rchild)
-        if lchild is not None and node.value is not NULL and rchild is not None and lchild.value is not NULL and rchild.value is not NULL:
-            # print 'Before: ' + str([node,lchild,rchild])
-            if node.value[3] >= maxML([lchild, rchild]):
+        # The recursive call to reach the end of the Trie.
+        self.dfs_items(fchild)
+        self.dfs_items(schild)
+
+        # Check if the node is an prefix (not just a connecting node) and that 2 children exist with prefix's and value's
+        if node.value is not NULL and fchild.value is not NULL and schild is not None and schild.value is not NULL:
+            # print 'Before: ' + str([node,fchild,schild]) # Just for debugging.
+
+            # To check if the maxLength of the parent is higher or equal to the max(children's  maxLength)
+            if node.value[3] >= maxML([fchild, schild]):
                 pass
             else:
-                node.value = [node.value[0], node.value[1], node.value[2], minML([lchild, rchild])]
+                # Only update the max length of the parent if it's less than the max of children
+                node.value = [node.value[0], node.value[1], node.value[2], minML([fchild, schild])]
+            # Only hide a child if the parent's max length is covering the child's max length
+            if node.value[3] >= fchild.value[3]:
+                fchild.show = False
+            # Only hide a child if the parent's max length is covering the child's max length
+            if node.value[3] >= schild.value[3]:
+                schild.show = False
 
-            if node.value[3] >= lchild.value[3]:
-                lchild.show = False
-            if node.value[3] >= rchild.value[3]:
-                rchild.show = False
 
-            # Update the maxLength of the parent.
-            # In case the parent would hide a child whose children are not
-            # included in the parent's maxLength
+            # This is just for debugging.
             aftrlist = [node]
-            if lchild.show :
-                aftrlist += [lchild]
-            if rchild.show :
-                aftrlist += [rchild]
+            if fchild.show :
+                aftrlist += [fchild]
+            if schild.show :
+                aftrlist += [schild]
 
             # print 'After: ' + str(aftrlist) + '\n'
 
 def minML(childList):
-    ''' This method should return back the min of the children maxLength'''
+    ''' This method should return back the min of the children's maxLength'''
     numlist = list()
     for child in childList:
         numlist += [child.value[3]]  # Add the MaxLength to the list
     return min(numlist)
 
 def maxML(childList):
-    ''' This method should return back the min of the children maxLength'''
+    ''' This method should return back the max of the children's maxLength'''
     numlist = list()
     for child in childList:
         numlist += [child.value[3]]  # Add the MaxLength to the list
