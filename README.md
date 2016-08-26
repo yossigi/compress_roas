@@ -4,6 +4,11 @@ A python script that wade through the ROAs that rcynic collects and compress it 
 ```shell
   [Time] [ASN] [IP_Prefix] [maxLength]
 ```
+# ROA-Requester
+
+```shell
+  roa-requester [bgp-config-directory] [privateKey-directory]
+```
 
 
 per line of all the result data.
