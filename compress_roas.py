@@ -24,8 +24,8 @@ def getDictCSV(filename):
         prefix = ip[0]
         key = binTools.prefix_to_key(prefix,AS)
         try:
-            maxLength = int(ip[1])
-            # maxLength = 32
+            # maxLength = int(ip[1])
+            maxLength = 32
         except IndexError:
             maxLength = len(key) - 3 - len(str(bin(AS))[2:]) # Because the '$' and v number {4,6}
         # print key
