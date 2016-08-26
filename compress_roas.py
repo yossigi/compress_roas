@@ -27,7 +27,7 @@ def getDictCSV(filename):
             maxLength = int(ip[1])
             # maxLength = 32
         except IndexError:
-            maxLength = len(key) - 2 - len(str(bin(AS))[2:]) # Because the '$' and v number {4,6}
+            maxLength = len(key) - 3 - len(str(bin(AS))[2:]) # Because the '$' and v number {4,6}
         # print key
         if key in IPdict:
             IPdict[key] = [Time,AS,prefix,max(maxLength,IPdict[key][3])]

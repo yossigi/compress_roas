@@ -1,4 +1,3 @@
-#! /usr/bin/python
 import netaddr
 
 
@@ -33,4 +32,4 @@ def key_to_prefix(key):
     ip = netaddr.IPAddress(i)
     return netaddr.IPNetwork(str(ip) + "/" + str(l))
 
-# print prefix_to_key('192.168.1.1/16',123)
+# print len(prefix_to_key('192.168.1.1/16',123)) - len(str(bin(123))[2:]) - 3
