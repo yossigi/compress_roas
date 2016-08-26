@@ -45,8 +45,7 @@ class Trie(trie):
         self.dfs_items(rnode)
 
     def dfs_items(self, node):
-        # print 'This is my node : ' ,node
-
+        
         if node is None or not node.children:
             # When you reach a leaf node, just stop.
             return
@@ -67,7 +66,6 @@ class Trie(trie):
 
         # Check if the node is an prefix (not just a connecting node) and that 2 children exist with prefix's and value's
         if node.value is not NULL and fchild.value is not NULL and schild is not None and schild.value is not NULL:
-            # print 'Before: ' + str([node,fchild,schild]) # Just for debugging.
 
             # To check if the maxLength of the parent is higher or equal to the max(children's  maxLength)
             if node.value[3] >= maxML([fchild, schild]):
@@ -82,15 +80,6 @@ class Trie(trie):
             if node.value[3] >= schild.value[3]:
                 schild.show = False
 
-
-            # This is just for debugging.
-            aftrlist = [node]
-            if fchild.show :
-                aftrlist += [fchild]
-            if schild.show :
-                aftrlist += [schild]
-
-            # print 'After: ' + str(aftrlist) + '\n'
 
 def minML(childList):
     ''' This method should return back the min of the children's maxLength'''
