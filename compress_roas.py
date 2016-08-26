@@ -62,7 +62,7 @@ def getDictTXT(filename):
                     full_dub += ["prefix: " + str(prefix) + " AS: " + str(AS) + " maxLength: " + str(maxLength)]
                 else:
                     semi_dub += ["@prefix: " + str(prefix) + " AS: " + str(AS) + " maxLength: " + str(maxLength)]
-                IPdict[key] = [Time,AS,prefix,max(maxLength,IPdict[key][3])]
+                    IPdict[key] = [Time,AS,prefix,max(maxLength,IPdict[key][3])]
             else:
                 IPdict.update(ipReady(Time,AS, prefix, maxLength,key))
 
@@ -85,7 +85,7 @@ def ipReady(Time,AS,prefix, maxLength,key):
 # IPfilenameCSV = "C:\Users\OSAGGA\Documents\ROA_PyTrie\/ipv4_bgp_announcements.csv"
 # IPfilenameCSV = "C:\Users\OSAGGA\Documents\ROA_PyTrie\/test.csv"
 # IPfilenameCSV = "C:\Users\osagg\Documents\ROA_PyTrie\/valid_prefixes_list.csv"
-IPfilenameTXT = "C:\Users\OSAGGA\Documents\ROA_PyTrie\Output files\/roa_list_new.txt"
+IPfilenameTXT = "C:\Users\OSAGGA\Documents\ROA_PyTrie\Data files\/roa_list_new.txt"
 # IPfilenameTXT = "C:\Users\osagg\Documents\ROA_PyTrie\/roa_list.txt"
 
 

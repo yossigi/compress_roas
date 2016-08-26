@@ -1,6 +1,4 @@
-#! /usr/bin/python
 import netaddr
-
 
 def prefix_to_key(prefix, AS):
     prefix = netaddr.IPNetwork(prefix)
@@ -11,9 +9,9 @@ def prefix_to_key(prefix, AS):
         address = address[:-1]
         l >>= 1
     if prefix.version == 4:
-	return '$' + str(0) + bin(AS) + '$' +  address
+        return '$' + str(0) + str(bin(AS))[2:] + '$' +  address
     elif prefix.version == 6:
-	return '$' + str(1) + bin(AS) + '$' +  address
+        return '$' + str(1) + str(bin(AS))[2:] + '$' +  address
 
 
 def key_to_prefix(key):
@@ -32,3 +30,6 @@ def key_to_prefix(key):
     	i <<= (128 - j)
     ip = netaddr.IPAddress(i)
     return netaddr.IPNetwork(str(ip) + "/" + str(l))
+
+
+print prefix_to_key('8/9',321)
