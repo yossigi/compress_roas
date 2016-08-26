@@ -37,7 +37,7 @@ def getROA(output):
             try:
                 maxLength = int(ip[1])
             except IndexError: # If a max Length doesn't exist.
-                maxLength = len(key) - 3 - len(bin(AS)) # Because the '$'s and v number {0,1} and AS
+                maxLength = len(key) - 3 - len(str(bin(AS))[2:]) # Because the '$'s and v number {0,1} and AS
             if key in IPdict: # To handle duplicates with a diffrent max Length, just take the max of both.
                 IPdict[key] = [Time,AS,prefix,max(maxLength,IPdict[key][3])]
             else:
