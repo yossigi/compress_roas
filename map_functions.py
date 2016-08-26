@@ -2,7 +2,6 @@ import netaddr
 
 def prefix_to_key(prefix, AS):
     prefix = netaddr.IPNetwork(prefix)
-    #print prefix.version
     address = prefix.ip.bits().replace(".", "").replace(":","")
     l = int(prefix.cidr.hostmask.bin, 2)
     while(l > 0):
@@ -32,4 +31,4 @@ def key_to_prefix(key):
     return netaddr.IPNetwork(str(ip) + "/" + str(l))
 
 
-print prefix_to_key('8/9',321)
+# print len(prefix_to_key('192.168.1.1/16',123)) - len(str(bin(123))[2:]) - 3

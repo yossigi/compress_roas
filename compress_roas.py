@@ -24,10 +24,11 @@ def getDictCSV(filename):
         prefix = ip[0]
         key = binTools.prefix_to_key(prefix,AS)
         try:
-            maxLength = int(ip[1])
-            # maxLength = 24
+            # maxLength = int(ip[1])
+            maxLength = 32
         except IndexError:
-            maxLength = len(key) - 2 - len(bin(AS)) # Because the '$' and v number {4,6}
+            maxLength = len(key) - 3 - len(str(bin(AS))[2:]) # Because the '$' and v number {4,6}
+        # print key
         if key in IPdict:
             IPdict[key] = [Time,AS,prefix,max(maxLength,IPdict[key][3])]
         else:
@@ -56,7 +57,8 @@ def getDictTXT(filename):
             try:
                 maxLength = int(ip[1])
             except IndexError:
-                maxLength = len(key) - 3 - len(bin(AS)) # Because the '$' and v number {4,6} and '?' and AS
+                maxLength = len(key) - 3 - len(str(bin(AS))[2:]) # Because the '$' and v number {4,6} and '?' and AS
+            # print key
             if key in IPdict:
                 if maxLength == IPdict[key][3]:
                     full_dub += ["prefix: " + str(prefix) + " AS: " + str(AS) + " maxLength: " + str(maxLength)]
@@ -84,13 +86,13 @@ def ipReady(Time,AS,prefix, maxLength,key):
 
 # IPfilenameCSV = "C:\Users\OSAGGA\Documents\ROA_PyTrie\/ipv4_bgp_announcements.csv"
 # IPfilenameCSV = "C:\Users\OSAGGA\Documents\ROA_PyTrie\/test.csv"
-# IPfilenameCSV = "C:\Users\osagg\Documents\ROA_PyTrie\/valid_prefixes_list.csv"
-IPfilenameTXT = "C:\Users\OSAGGA\Documents\ROA_PyTrie\Data files\/roa_list_new.txt"
-# IPfilenameTXT = "C:\Users\osagg\Documents\ROA_PyTrie\/roa_list.txt"
+IPfilenameCSV = "C:\Users\osagg\Documents\ROA_PyTrie\Data files\ipv4_bgp_announcements.csv"
+# IPfilenameTXT = "C:\Users\OSAGGA\Documents\ROA_PyTrie\Output files\/roa_list_new.txt"
+# IPfilenameTXT = "C:\Users\osagg\Documents\ROA_PyTrie\Data files\/roa_list_new.txt"
 
 
-# t = Trie(getDictCSV(IPfilenameCSV))
-t = Trie(getDictTXT(IPfilenameTXT))
+t = Trie(getDictCSV(IPfilenameCSV))
+# t = Trie(getDictTXT(IPfilenameTXT))
 
 before = t.dec_items()
 
