@@ -12,13 +12,13 @@ def getDictCSV(filename):
     IPdict = dict()
     i = 0
     file = open(filename, 'r')
-    g = file.__iter__()
-    g.next()
+    # g = file.__iter__()
+    # g.next()
     for line in file:
-        i += 1
+        # i += 1
         line = line[:-1].split(',')
-        AS = int(line[0])
-        IP = line[1]
+        AS = int(line[1])
+        IP = line[0]
         Time = '13:37'
         ip = IP.split('-')
         prefix = ip[0]
@@ -33,7 +33,7 @@ def getDictCSV(filename):
             IPdict.update(ipReady(Time,AS, prefix, maxLength,key))
 
     file.close()
-    print 'Number of lines is:', i
+    # print 'Number of lines is:', i
     return IPdict
 
 def getDictTXT(filename):
@@ -71,13 +71,13 @@ def ipReady(Time,AS,prefix, maxLength,key):
 
 # IPfilenameCSV = "C:\Users\OSAGGA\Documents\ROA_PyTrie\/valid_prefixes_list.csv"
 # IPfilenameCSV = "C:\Users\OSAGGA\Documents\ROA_PyTrie\/test.csv"
-# IPfilenameCSV = "C:\Users\osagg\Documents\ROA_PyTrie\/valid_prefixes_list.csv"
-IPfilenameTXT = "C:\Users\OSAGGA\Documents\ROA_PyTrie\/roa_list.txt"
+IPfilenameCSV = "C:\Users\osagg\Documents\ROA_PyTrie\/ipv4_bgp_announcements.csv"
+# IPfilenameTXT = "C:\Users\OSAGGA\Documents\ROA_PyTrie\/roa_list.txt"
 # IPfilenameTXT = "C:\Users\osagg\Documents\ROA_PyTrie\/roa_list.txt"
 
 
-# t = Trie(getDictCSV(IPfilenameCSV))
-t = Trie(getDictTXT(IPfilenameTXT))
+t = Trie(getDictCSV(IPfilenameCSV))
+# t = Trie(getDictTXT(IPfilenameTXT))
 
 before = t.dec_items()
 
