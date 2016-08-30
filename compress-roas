@@ -36,6 +36,10 @@ def getROA(output):
             key = binTools.prefix_to_key(prefix, AS)
             try:
                 maxLength = int(ip[1])
+		prefixLength = len(key.split('$')[2])
+                # print prefixLength
+                if maxLength < prefixLength:
+                    continue # To skip the prefix's in which the maxLength is less that the prefix length.
             except IndexError: # If a max Length doesn't exist.
                 maxLength = len(key) - 3 - len(str(bin(AS))[2:]) # Because the '$'s and v number {0,1} and AS
             if key in IPdict: # To handle duplicates with a diffrent max Length, just take the max of both.
