@@ -24,8 +24,8 @@ def getDictCSV(filename):
         prefix = ip[0]
         key = binTools.prefix_to_key(prefix,AS)
         try:
-            # maxLength = int(ip[1])
-            maxLength = 32
+            maxLength = int(ip[1])
+            # maxLength = 32
         except IndexError:
             maxLength = len(key) - 3 - len(str(bin(AS))[2:]) # Because the '$' and v number {4,6}
         # print key
@@ -54,10 +54,15 @@ def getDictTXT(filename):
             ip = ip.split('-')
             prefix = ip[0]
             key = binTools.prefix_to_key(prefix,AS)
+            # print key
             try:
                 maxLength = int(ip[1])
+                prefixLength = len(key.split('$')[2])
+                # print prefixLength
+                if maxLength < prefixLength:
+                    continue # To skip the prefix's in which the maxLength is less that the prefix length.
             except IndexError:
-                maxLength = len(key) - 3 - len(str(bin(AS))[2:]) # Because the '$' and v number {4,6} and '?' and AS
+                maxLength = len(key) - 3 - len(str(bin(AS))[2:]) # Because the '$' and v number {0,1} and '$' and AS
             # print key
             if key in IPdict:
                 if maxLength == IPdict[key][3]:
@@ -69,14 +74,14 @@ def getDictTXT(filename):
                 IPdict.update(ipReady(Time,AS, prefix, maxLength,key))
 
     print 'Number of lines is:', i
-    for ip in full_dub:
-        print ip
-    for ip in semi_dub:
-        print ip
+    # for ip in full_dub:
+    #     print ip
+    # for ip in semi_dub:
+    #     print ip
     # print full_dub
     # print semi_dub
-    print len(full_dub)
-    print len(semi_dub)
+    # print len(full_dub)
+    # print len(semi_dub)
     file.close()
     return IPdict
 
@@ -86,17 +91,18 @@ def ipReady(Time,AS,prefix, maxLength,key):
 
 # IPfilenameCSV = "C:\Users\OSAGGA\Documents\ROA_PyTrie\/ipv4_bgp_announcements.csv"
 # IPfilenameCSV = "C:\Users\OSAGGA\Documents\ROA_PyTrie\/test.csv"
-IPfilenameCSV = "C:\Users\osagg\Documents\ROA_PyTrie\Data files\ipv4_bgp_announcements.csv"
-# IPfilenameTXT = "C:\Users\OSAGGA\Documents\ROA_PyTrie\Output files\/roa_list_new.txt"
+# IPfilenameCSV = "C:\Users\osagg\Documents\ROA_PyTrie\Data files\ipv4_bgp_announcements.csv"
+IPfilenameTXT = "C:\Users\OSAGGA\Documents\compress_roas\Data files\ip_list.txt"
 # IPfilenameTXT = "C:\Users\osagg\Documents\ROA_PyTrie\Data files\/roa_list_new.txt"
 
 
-t = Trie(getDictCSV(IPfilenameCSV))
-# t = Trie(getDictTXT(IPfilenameTXT))
+# t = Trie(getDictCSV(IPfilenameCSV))
+t = Trie(getDictTXT(IPfilenameTXT))
 
 before = t.dec_items()
 
-# print 'All-Before:',before + '\n'
+print 'All-Before:',before
+
 # Here I do the minimizing of the ROA's
 t.combine_items()
 
@@ -106,7 +112,7 @@ diff = len(before) - len(after)
 p = float(diff / float(len(before))) * 100.0
 
 
-# print 'All-After:',after
+print 'All-After:',after
 
 print len(before)
 print len(after)
