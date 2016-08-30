@@ -8,9 +8,10 @@ import subprocess
 
 
 def check_dir(d):
-  if not os.path.isdir(d):
-    raise argparse.ArgumentTypeError("%r is not a directory" % d)
-  return d
+    ''' A function to check if the dir inputted is valid'''
+    if not os.path.isdir(d):
+        raise argparse.ArgumentTypeError("%r is not a directory" % d)
+    return d
 
 parser = argparse.ArgumentParser(description ="Scan for ROA's and compress them")
 parser.add_argument("rcynic_dir", nargs = "+", type = check_dir,
@@ -18,42 +19,50 @@ parser.add_argument("rcynic_dir", nargs = "+", type = check_dir,
 
 args = parser.parse_args()
 
+# Here we call the utility "scan_roas" to get the list of (ASN, IP/prefix, - maxLength)
 terminal = subprocess.Popen(['scan_roas' , args.rcynic_dir[0] ], stdout=subprocess.PIPE)
 output = terminal.communicate()[0]
 
 
 def getROA(output):
+    '''This function take the output of scan_roas and extract the data (prefix,AS,maxLength)
+        and return a dictionary with all the unique* prefix's from input'''
     IPdict = dict()
-    output = output[:-1].split('\n')
+    output = output[:-1].split('\n') # Split the data line by line.
     for line in output:
         line = line.split(' ')
-        Time = line[0]
-        AS = int(line[1])
-        IP = line[2:]
+        Time = line[0] # Take the time of the ROA signing.
+        AS = int(line[1]) # AS number
+        IP = line[2:] # the prefix with '/prefixLength'
         for ip in IP:
-            ip = ip.split('-')
+            # In case an ROA have more than one prefix
+            ip = ip.split('-') # To get the maxLength if it's there
             prefix = ip[0]
-            key = binTools.prefix_to_key(prefix, AS)
+            key = binTools.prefix_to_key(prefix, AS) # generate the key to be used in the Trie
             try:
+                # check if the maxLength exists.
                 maxLength = int(ip[1])
-		prefixLength = len(key.split('$')[2])
+                prefixLength = len(key.split('$')[2]) # Because of the way I construct the key. [check map_functions.py]
                 # print prefixLength
                 if maxLength < prefixLength:
-                    continue # To skip the prefix's in which the maxLength is less that the prefix length.
-            except IndexError: # If a max Length doesn't exist.
-                maxLength = len(key) - 3 - len(str(bin(AS))[2:]) # Because the '$'s and v number {0,1} and AS
-            if key in IPdict: # To handle duplicates with a diffrent max Length, just take the max of both.
+                    # If you found maxLength and that maxLength is shorter than the prefixLength, then skip this prefix.
+                    continue
+            except IndexError: # If a maxLength doesn't exist.
+                maxLength = prefixLength
+            if key in IPdict:
+                # To handle duplicates with a diffrent max Length, just take the max of both.
                 IPdict[key] = [Time,AS,prefix,max(maxLength,IPdict[key][3])]
             else:
-                IPdict.update(ipReady(Time,AS, prefix, maxLength,key))
+                # Add the new unique prefix to the dictionary
+                IPdict.update(createItem(Time,AS, prefix, maxLength,key))
 
     return IPdict
 
 
-def ipReady(Time,AS,prefix, maxLength,key):
-  ''' Return a dictionary object of the input '''
+def createItem(Time,AS,prefix, maxLength,key):
+  ''' Return a dictionary item object of the input '''
   return {key: [Time, AS, prefix, maxLength]}
 
 t = Trie(getROA(output)) #To generate the dictionary as an input to the Trie.
 t.combine_items() # Compress the data in the Trie.
-t.dec_items() # Print the output.
+t.dec_items() # Print the output to stdout.

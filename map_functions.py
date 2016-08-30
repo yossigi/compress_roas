@@ -3,20 +3,20 @@ import netaddr
 
 
 def prefix_to_key(prefix, AS):
+    ''' A function given a prefix and AS generates a binary key to be used in a Trie.'''
     prefix = netaddr.IPNetwork(prefix)
-    #print prefix.version
     address = prefix.ip.bits().replace(".", "").replace(":","")
     l = int(prefix.cidr.hostmask.bin, 2)
     while(l > 0):
         address = address[:-1]
         l >>= 1
     if prefix.version == 4:
-	       return '$' + str(0) + str(bin(AS))[2:] + '$' +  address
+        return '$' + str(0) + str(bin(AS))[2:] + '$' +  address
     elif prefix.version == 6:
-	       return '$' + str(1) + str(bin(AS))[2:] + '$' +  address
-
+        return '$' + str(1) + str(bin(AS))[2:] + '$' +  address
 
 def key_to_prefix(key):
+    ''' A function that given a key from the above function (prefix_to_key) gives back the prefix. '''
     v = int(key[1])
     k = key.split('$')[2]
     l = len(k)
