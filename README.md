@@ -6,6 +6,7 @@ A python script that wade through the ROAs that rcynic collects and compress it 
 ```
 # ROA-Requester
 
+A python script given the directory of the BGP config and private key should genarate a ROA request.
 ```shell
   roa-requester [bgp-config-file-directory] [privateKey-directory]
 ```
