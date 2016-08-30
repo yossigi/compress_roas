@@ -11,9 +11,9 @@ def prefix_to_key(prefix, AS):
         address = address[:-1]
         l >>= 1
     if prefix.version == 4:
-	return '$' + str(0) + str(bin(AS))[2:] + '$' +  address
+	       return '$' + str(0) + str(bin(AS))[2:] + '$' +  address
     elif prefix.version == 6:
-	return '$' + str(1) + str(bin(AS))[2:] + '$' +  address
+	       return '$' + str(1) + str(bin(AS))[2:] + '$' +  address
 
 
 def key_to_prefix(key):
