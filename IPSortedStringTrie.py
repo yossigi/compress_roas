@@ -10,7 +10,6 @@ class nodeS(node):
     def __init__(self, value=NULL):
         self.value = value
         self.children = self.ChildrenFactory()
-        self.show = True
     def __repr__(self):
         ''' It's this format: [Time] [ASN] [IP_Prefix (with prefixLength)] [maxLength] '''
         return str(self.value[0]) + ' ' +  str(self.value[1]) + ' ' + str(self.value[2]) + '-' + str(self.value[3])
@@ -32,7 +31,7 @@ class Trie(trie):
 
         def generator(node, key_factory=self.KeyFactory, parts=parts,
                       append=append, NULL=NULL):
-            if node.value is not NULL and node.show:
+            if node.value is not NULL:
                 # Only print if node.show is True.
                 yield node
             for part, child in node.children.iteritems():
@@ -80,10 +79,12 @@ class Trie(trie):
                 node.value = [node.value[0], node.value[1], node.value[2], minML([fchild, schild])]
             # Only hide a child if the parent's max length is covering the child's max length
             if node.value[3] >= fchild.value[3]:
-                fchild.show = False
+                key = binTools.prefix_to_key(fchild.value[2],fchild.value[1])
+                del self[key]
             # Only hide a child if the parent's max length is covering the child's max length
             if node.value[3] >= schild.value[3]:
-                schild.show = False
+                key = binTools.prefix_to_key(schild.value[2],schild.value[1])
+                del self[key]
 
 
 def minML(childList):
