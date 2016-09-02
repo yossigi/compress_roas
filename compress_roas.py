@@ -23,12 +23,15 @@ def getDictCSV(filename):
         ip = IP.split('-')
         prefix = ip[0]
         key = binTools.prefix_to_key(prefix,AS)
+        prefixLength = len(key.split('$')[2])
+        # print key
         try:
             maxLength = int(ip[1])
-            # maxLength = 32
+            if maxLength < prefixLength:
+                continue # To skip the prefix's in which the maxLength is less that the prefix length.
         except IndexError:
-            maxLength = len(key) - 3 - len(str(bin(AS))[2:]) # Because the '$' and v number {4,6}
-        # print key
+            # In case the maxLength didn't exist.
+            maxLength = prefixLength
         if key in IPdict:
             IPdict[key] = [Time,AS,prefix,max(maxLength,IPdict[key][3])]
         else:
@@ -54,34 +57,21 @@ def getDictTXT(filename):
             ip = ip.split('-')
             prefix = ip[0]
             key = binTools.prefix_to_key(prefix,AS)
+            prefixLength = len(key.split('$')[2])
             # print key
             try:
                 maxLength = int(ip[1])
-                prefixLength = len(key.split('$')[2])
-                # print prefixLength
                 if maxLength < prefixLength:
                     continue # To skip the prefix's in which the maxLength is less that the prefix length.
             except IndexError:
-                maxLength = len(key) - 3 - len(str(bin(AS))[2:]) # Because the '$' and v number {0,1} and '$' and AS
-            # print key
+                # In case the maxLength didn't exist.
+                maxLength = prefixLength
             if key in IPdict:
-                if maxLength == IPdict[key][3]:
-                    full_dub += ["prefix: " + str(prefix) + " AS: " + str(AS) + " maxLength: " + str(maxLength)]
-                else:
-                    semi_dub += ["@prefix: " + str(prefix) + " AS: " + str(AS) + " maxLength: " + str(maxLength)]
-                    IPdict[key] = [Time,AS,prefix,max(maxLength,IPdict[key][3])]
+                IPdict[key] = [Time,AS,prefix,max(maxLength,IPdict[key][3])]
             else:
                 IPdict.update(ipReady(Time,AS, prefix, maxLength,key))
 
-    print 'Number of lines is:', i
-    # for ip in full_dub:
-    #     print ip
-    # for ip in semi_dub:
-    #     print ip
-    # print full_dub
-    # print semi_dub
-    # print len(full_dub)
-    # print len(semi_dub)
+    # print 'Number of lines is:', i
     file.close()
     return IPdict
 
