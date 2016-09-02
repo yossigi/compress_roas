@@ -92,7 +92,7 @@ def ipReady(Time,AS,prefix, maxLength,key):
 # IPfilenameCSV = "C:\Users\OSAGGA\Documents\ROA_PyTrie\/ipv4_bgp_announcements.csv"
 # IPfilenameCSV = "C:\Users\OSAGGA\Documents\ROA_PyTrie\/test.csv"
 # IPfilenameCSV = "C:\Users\osagg\Documents\ROA_PyTrie\Data files\ipv4_bgp_announcements.csv"
-IPfilenameTXT = "C:\Users\OSAGGA\Documents\compress_roas\Data files\ip_list.txt"
+IPfilenameTXT = "C:\Users\OSAGGA\Documents\compress_roas\Data files\/roa_list_new.txt"
 # IPfilenameTXT = "C:\Users\osagg\Documents\ROA_PyTrie\Data files\/roa_list_new.txt"
 
 
@@ -101,7 +101,7 @@ t = Trie(getDictTXT(IPfilenameTXT))
 
 before = t.dec_items()
 
-print 'All-Before:',before
+# print 'All-Before:',before
 
 # Here I do the minimizing of the ROA's
 t.combine_items()
@@ -112,7 +112,7 @@ diff = len(before) - len(after)
 p = float(diff / float(len(before))) * 100.0
 
 
-print 'All-After:',after
+# print 'All-After:',after
 
 print len(before)
 print len(after)
