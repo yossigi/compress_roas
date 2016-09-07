@@ -11,7 +11,7 @@ def prefix_to_key(prefix, AS):
         l >>= 1
 
     # Building the key
-    
+
     key = '$' + str(bin(AS)) + '$'
 
     if prefix.version == 4:
