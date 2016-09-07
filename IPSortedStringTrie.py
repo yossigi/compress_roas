@@ -20,6 +20,7 @@ class Trie(trie):
         l = list()
 
         for node in self.dec_iternodes():
+            # print binTools.prefix_to_key(node.value[2],node.value[1])
             l += [node]
 
         return l
@@ -45,8 +46,7 @@ class Trie(trie):
 
     def combine_items(self):
         ''' This function starts the DFS starting from the root of the Trie.'''
-        rnode = self._root
-        self.dfs_items(rnode)
+        self.dfs_items(self._root)
 
     def dfs_items(self, node):
         ''' This function compresses the prefix's '''
@@ -71,13 +71,13 @@ class Trie(trie):
 
         # Check if the node is an prefix (not just a connecting node) and that 2 children exist with prefix's and value's
         if node.value is not NULL and fchild.value is not NULL and schild is not None and schild.value is not NULL:
-
+            # print 'HI!'
             # To check if the maxLength of the parent is higher or equal to the max(children's  maxLength)
             if node.value[3] >= maxML([fchild, schild]):
                 pass # No need to change the maxLength in this case.
             else:
                 # Only update the max length of the parent if it's less than the max of children
-                node.value = [node.value[0], node.value[1], node.value[2], minML([fchild, schild])]
+                node.value[3] = minML([fchild, schild])
             # Only hide a child if the parent's max length is covering the child's max length
             if node.value[3] >= fchild.value[3]:
                 key = binTools.prefix_to_key(fchild.value[2],fchild.value[1])
