@@ -10,15 +10,23 @@ def prefix_to_key(prefix, AS):
     while(l > 0):
         address = address[:-1]
         l >>= 1
+
+    # Building the key
+
+    key = '$' + str(bin(AS)) + '$'
+
     if prefix.version == 4:
-        return '$' + str(0) + AS + '$' +  address
+        key += str(0)
     elif prefix.version == 6:
-        return '$' + str(1) + AS + '$' +  address
+        key += str(1)
+    key += '$' +  address
+    return key
 
 def key_to_prefix(key):
     ''' A function that given a key from the above function (prefix_to_key) gives back the prefix. '''
-    v = int(key[1])
-    k = key.split('$')[2]
+    key = key.split('$')
+    k = key[3]
+    v = int(key[2])
     l = len(k)
     i = 0
     j = 0
@@ -32,3 +40,6 @@ def key_to_prefix(key):
     	i <<= (128 - j)
     ip = netaddr.IPAddress(i)
     return netaddr.IPNetwork(str(ip) + "/" + str(l))
+
+# print prefix_to_key('8.8/16',123)
+# print key_to_prefix(prefix_to_key('8.8/16',123))

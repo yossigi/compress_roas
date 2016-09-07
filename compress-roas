@@ -42,7 +42,7 @@ def getROA(output):
             try:
                 # check if the maxLength exists.
                 maxLength = int(ip[1])
-                prefixLength = len(key.split('$')[2]) # Because of the way I construct the key. [check map_functions.py]
+                prefixLength = len(key.split('$')[3]) # Because of the way I construct the key. [check map_functions.py]
                 # print prefixLength
                 if maxLength < prefixLength:
                     # If you found maxLength and that maxLength is shorter than the prefixLength, then skip this prefix.
