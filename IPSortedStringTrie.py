@@ -1,5 +1,6 @@
 from pytrie import SortedStringTrie as trie, NULL, Node as node
 import map_functions as binTools
+import multiprocessing
 
 
 class nodeS(node):
@@ -37,9 +38,9 @@ class Trie(trie):
         node = self._root
         return generator(node)
 
-    def combine_items(self):
-        ''' This function starts the DFS starting from the root of the Trie.'''
-        self.dfs_items(self._root)
+    # def combine_items(self):
+    #     ''' This function starts the DFS starting from the root of the Trie.'''
+    #     self.dfs_items(self._root)
 
     def dfs_items(self, node):
         ''' This function compresses the prefix's '''
@@ -94,3 +95,14 @@ def maxML(childList):
     for child in childList:
         numlist += [child.value[3]]  # Add the MaxLength to the list
     return max(numlist)
+def AS_nodes(self,node):
+    g = node.children.iteritems()
+
+    # To get pointers on the children nodes.
+    fchild = node.children.get(str(g.next()[0]))
+    if fchild
+
+def compress(self):
+    pool = multiprocessing.Pool(multiprocessing.cpu_count())
+    nodes = AS_nodes(self._root)
+    [pool.apply_async( dfs_items, AS ) for AS in nodes]
