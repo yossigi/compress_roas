@@ -4,8 +4,10 @@ Created on Wed Aug 03 12:14:35 2016
 @author: Omar Sagga
 """
 
+import resource 
 import map_functions as binTools
 from IPSortedStringTrie import Trie
+print 'Size before:',resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1000
 
 
 def getDictCSV(filename):
@@ -78,10 +80,9 @@ def ipReady(Time,AS,prefix, maxLength,key):
 
 # IPfilenameCSV = "C:\Users\OSAGGA\Documents\compress_roas\Data files\/bgp_announcements\/bgp_announcements.csv"
 # IPfilenameCSV = "C:\Users\OSAGGA\Documents\compress_roas\Data files\/bgp_valid_announcements\/bgp_valid_announcements.csv"
-IPfilenameTXT = "C:\Users\OSAGGA\Documents\compress_roas\Data files\/roa_list_new.txt"
+# IPfilenameTXT = "C:\Users\OSAGGA\Documents\compress_roas\Data files\/roa_list_new.txt"
 # IPfilenameTXT = "C:\Users\OSAGGA\Documents\compress_roas\Data files\/ip_list.txt"
-# IPfilenameTXT = "C:\Users\osagg\Documents\ROA_PyTrie\Data files\/roa_list_new.txt"
-
+IPfilenameTXT = "/home/osagga/Documents/compress-roas/Data files/roa_list_new.txt"
 
 # t = Trie(**getDictCSV(IPfilenameCSV))
 t = Trie(**getDictTXT(IPfilenameTXT))
@@ -92,8 +93,10 @@ before = t.dec_items()
 
 # print t.keys('$08699$')
 
+print 'Size before:',resource.getrusage(resource.RUSAGE_SELF).ru_maxrss 
 # Here I do the minimizing of the ROA's
 t.combine_items()
+print 'Size after:',resource.getrusage(resource.RUSAGE_SELF).ru_maxrss 
 
 after = t.dec_items()
 
