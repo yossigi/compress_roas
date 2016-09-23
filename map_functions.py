@@ -12,12 +12,8 @@ def prefix_to_key(prefix, AS):
 
     # Building the key
 
-    key = '$' + str(bin(AS)) + '$'
-
-    if prefix.version == 4:
-        key += str(0)
-    elif prefix.version == 6:
-        key += str(1)
+    key = '$' + str(bin(AS))
+    key +='$' + str(prefix.version)
     key += '$' +  address
     return key
 

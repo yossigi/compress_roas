@@ -10,15 +10,15 @@ from IPSortedStringTrie import Trie
 
 def getDictCSV(filename):
     IPdict = dict()
-    i = 0
+    rip = 0
     file = open(filename, 'r')
     for line in file:
-        i += 1
         line = line[:-1].split(',')
         AS = int(line[1])
         IP = line[0]
         Time = '13:37'
         ip = IP.split('-')
+        rip += 1
         prefix = ip[0]
         key = binTools.prefix_to_key(prefix,AS)
         prefixLength = len(key.split('$')[3])
@@ -35,20 +35,22 @@ def getDictCSV(filename):
             IPdict.update(ipReady(Time,AS, prefix, maxLength,key))
 
     file.close()
-    print 'Number of lines is:', i
+    print "Number of ip's is:", rip
     return IPdict
 
 def getDictTXT(filename):
     IPdict = dict()
     file = open(filename, 'r')
-    i = 0
+    roa = 0
+    rip = 0
     for line in file:
+        roa += 1
         line = line[:-1].split(' ')
         Time = ''
         AS = int(line[1])
         IP = line[2:]
         for ip in IP:
-            i += 1
+            rip += 1
             ip = ip.split('-')
             prefix = ip[0]
             key = binTools.prefix_to_key(prefix,AS)
@@ -67,7 +69,8 @@ def getDictTXT(filename):
             else:
                 IPdict.update(ipReady(Time,AS, prefix, maxLength,key))
 
-    # print 'Number of lines is:', i
+    print 'Number of roas is:', roa
+    print "Number of ip's is:", rip
     file.close()
     return IPdict
 
@@ -78,13 +81,13 @@ def ipReady(Time,AS,prefix, maxLength,key):
 
 # IPfilenameCSV = "C:\Users\OSAGGA\Documents\compress_roas\Data files\/bgp_announcements\/bgp_announcements.csv"
 # IPfilenameCSV = "C:\Users\OSAGGA\Documents\compress_roas\Data files\/bgp_valid_announcements\/bgp_valid_announcements.csv"
-IPfilenameTXT = "C:\Users\OSAGGA\Documents\compress_roas\Data files\/roa_list_new.txt"
 # IPfilenameTXT = "C:\Users\OSAGGA\Documents\compress_roas\Data files\/ip_list.txt"
-# IPfilenameTXT = "C:\Users\osagg\Documents\ROA_PyTrie\Data files\/roa_list_new.txt"
+# IPfilenameTXT = "C:\Users\OSAGGA\Documents\compress_roas\Data files\/roa_list.txt"
+IPfilenameCSV = "C:\Users\OSAGGA\Documents\compress_roas\Data files\/bgp_announcements.txt"
 
 
-# t = Trie(**getDictCSV(IPfilenameCSV))
-t = Trie(**getDictTXT(IPfilenameTXT))
+t = Trie(**getDictCSV(IPfilenameCSV))
+# t = Trie(**getDictTXT(IPfilenameTXT))
 
 before = t.dec_items()
 
