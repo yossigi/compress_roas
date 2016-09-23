@@ -11,16 +11,9 @@ def prefix_to_key(prefix):
         l >>= 1
 
     # Building the key
-<<<<<<< HEAD
     # No need for the first '$', the root is one at the begining.
     key = str(prefix.version) + '$'
     key +=  address
-=======
-
-    key = '$' + str(bin(AS))
-    key +='$' + str(prefix.version)
-    key += '$' +  address
->>>>>>> eed14ca78b383aedd3c5ff7b1c1b79de7f064263
     return key
 
 def key_to_prefix(key):
