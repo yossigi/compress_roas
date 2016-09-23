@@ -12,13 +12,13 @@ from multiprocessing import Process, Manager, Pool,cpu_count
 def getDictCSV(filename):
     IPdict = dict()
     Trie_dict = {}
-    i = 0
+    rip = 0
     file = open(filename, 'r')
     for line in file:
-        i += 1
+        rip += 1
         line = line[:-1].split(',')
-        AS = line[0]
-        IP = line[1]
+        AS = line[1]
+        IP = line[0]
         Time = '13:37'
         ip = IP.split('-')
         prefix = ip[0]
@@ -42,7 +42,7 @@ def getDictCSV(filename):
     for AS in Trie_dict:
         Trie_dict[AS] = Trie(**Trie_dict[AS])
     file.close()
-    # print 'Number of lines is:', i
+    print "Number of ip's is:", rip
     return Trie_dict
 
 def getDictTXT(filename):
@@ -145,16 +145,18 @@ def mid_compress(AS,mDict):
         return Trie
     mDict[AS] = final_compress(mDict[AS])
 
-
-
-
+def print_dict(Dict):
+    for AS in Dict.values():
+        for prefix in AS.dec_iternodes():
+            print prefix
 
 
 # IPfilenameCSV = "C:\Users\OSAGGA\Documents\compress_roas\Data files\/bgp_valid_announcements\/bgp_valid_announcements.csv"
 # IPfilenameTXT = "C:\Users\OSAGGA\Documents\compress_roas\Data files\/roa_list_new.txt"
 # IPfilenameTXT = "C:\Users\OSAGGA\Documents\compress_roas\Data files\/ip_list.txt"
-# IPfilenameTXT = "/home/osagga/Documents/compress-roas/Data files/roa_list_new.txt"
-IPfilenameTXT = "/home/osagga/Documents/compress-roas/Data files/ip_list.txt"
+IPfilenameTXT = "/home/osagga/Documents/compress-roas/Data files/roa_list.txt"
+# IPfilenameCSV = "/home/osagga/Documents/compress-roas/Data files/bgp_announcements.txt"
+# IPfilenameTXT = "/home/osagga/Documents/compress-roas/Data files/ip_list.txt"
 # IPfilenameCSV = "/home/osagga/Documents/compress-roas/Data files/all_prefixes_list.csv"
 
 Trie_Dict = getDictTXT(IPfilenameTXT)
@@ -171,19 +173,21 @@ def compress():
     return suTrieDict
 
 
-before = sum([len(Trie_Dict[AS]) for AS in Trie_Dict.keys()])
-
+before = sum([len(Trie_Dict[AS].dec_items()) for AS in Trie_Dict.keys()])
+# print_dict(Trie_Dict)
 [mid_compress(AS,Trie_Dict) for AS in Trie_Dict.keys()]
 
 # Trie_Dict = compress()
 
-after = sum([len(Trie_Dict[AS]) for AS in Trie_Dict.keys()])
+after = sum([len(Trie_Dict[AS].dec_items()) for AS in Trie_Dict.keys()])
 
 
 diff = before - after
 p = float(diff / float(before)) * 100.0
 
 
-print before
-print after
-print p, '%'
+# print before
+print_dict(Trie_Dict)
+# # print len(Trie_Dict)
+# print after
+# print p, '%'
