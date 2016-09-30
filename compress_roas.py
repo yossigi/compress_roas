@@ -24,6 +24,12 @@ def getDictCSV(filename):
         prefix = ip[0]
         key = binTools.prefix_to_key(prefix)
         prefixLength = len(key.split('$')[1])
+        # if int(key[0]) == 4:
+        #     maxLength = 32
+        # elif int(key[0]) == 6:
+        #     maxLength = 128
+        # else:
+        #     print key
         try:
             maxLength = int(ip[1])
             if maxLength < prefixLength:
@@ -39,8 +45,6 @@ def getDictCSV(filename):
         else:
             Trie_dict[AS] = ipReady(Time,AS, prefix, maxLength,key)
 
-    for AS in Trie_dict:
-        Trie_dict[AS] = Trie(**Trie_dict[AS])
     file.close()
     print "Number of ip's is:", rip
     return Trie_dict
@@ -60,6 +64,7 @@ def getDictTXT(filename):
             rip += 1
             ip = ip.split('-')
             prefix = ip[0]
+            # print prefix
             key = binTools.prefix_to_key(prefix)
             # print key
             prefixLength = len(key.split('$')[1])
@@ -79,8 +84,6 @@ def getDictTXT(filename):
             else:
                 Trie_dict[AS] = ipReady(Time,AS, prefix, maxLength,key)
 
-    for AS in Trie_dict:
-        Trie_dict[AS] = Trie(**Trie_dict[AS])
     print "ROA's :", roa
     print "IP's :", rip
     file.close()
@@ -90,7 +93,6 @@ def ipReady(Time,AS,prefix, maxLength,key):
     return {key: [Time, AS, prefix, maxLength]}
 
 def mid_compress(AS,mDict):
-    ''' This function starts the DFS starting from the root of the Trie.'''
     def final_compress(Trie):
         def compress_Tries(node):
             ''' This function compresses the prefix's '''
@@ -122,13 +124,18 @@ def mid_compress(AS,mDict):
                     # Only update the max length of the parent if it's less than the max of children
                     node.value[3] = minML([fchild, schild])
                 # Only hide a child if the parent's max length is covering the child's max length
+                # b_list = [node,fchild,schild]
+                # print 'before:',b_list
                 if node.value[3] >= fchild.value[3]:
                     key = binTools.prefix_to_key(fchild.value[2])
                     del Trie[key]
+                    # del b_list[1]
                 # Only hide a child if the parent's max length is covering the child's max length
                 if node.value[3] >= schild.value[3]:
                     key = binTools.prefix_to_key(schild.value[2])
                     del Trie[key]
+                    # del b_list[-1]
+                # print 'after:',b_list
         def minML(childList):
             ''' This method should return the min of the children's maxLength'''
             numlist = list()
@@ -143,6 +150,7 @@ def mid_compress(AS,mDict):
             return max(numlist)
         compress_Tries(Trie._root)
         return Trie
+    mDict[AS] = Trie(**mDict[AS])
     mDict[AS] = final_compress(mDict[AS])
 
 def print_dict(Dict):
@@ -151,20 +159,21 @@ def print_dict(Dict):
             print prefix
 
 
-# IPfilenameCSV = "C:\Users\OSAGGA\Documents\compress_roas\Data files\/bgp_valid_announcements\/bgp_valid_announcements.csv"
-# IPfilenameTXT = "C:\Users\OSAGGA\Documents\compress_roas\Data files\/roa_list_new.txt"
-# IPfilenameTXT = "C:\Users\OSAGGA\Documents\compress_roas\Data files\/ip_list.txt"
-IPfilenameTXT = "/home/osagga/Documents/compress-roas/Data files/roa_list.txt"
+# IPfilenameTXT = "/home/osagga/Documents/compress-roas/Data files/ip_list_v2.txt"
 # IPfilenameCSV = "/home/osagga/Documents/compress-roas/Data files/bgp_announcements.txt"
 # IPfilenameTXT = "/home/osagga/Documents/compress-roas/Data files/ip_list.txt"
-# IPfilenameCSV = "/home/osagga/Documents/compress-roas/Data files/all_prefixes_list.csv"
+IPfilenameTXT = "/home/osagga/Documents/compress-roas/Data files/roa_list.txt"
+# IPfilenameCSV = "/home/osagga/Documents/compress-roas/Data files/bgp_valid_announcements.txt"
+IPfilenameCSV = "/home/osagga/Documents/compress-roas/Data files/bgp_announcements.txt"
 
-Trie_Dict = getDictTXT(IPfilenameTXT)
-# Trie_Dict = getDictCSV(IPfilenameCSV)
+# Trie_Dict = getDictTXT(IPfilenameTXT)
+Trie_Dict = getDictCSV(IPfilenameCSV)
 
-def compress():
+# before = sum([len(Trie_Dict[key]) for key in Trie_Dict.keys()])
+
+def compress_multi():
     manager = Manager()
-    pool = Pool(8)
+    pool = Pool(50)
     suTrieDict = manager.dict(Trie_Dict)
     [pool.apply_async(mid_compress, (key,suTrieDict)) for key in suTrieDict.keys()]
     # [mid_compress(key,suTrieDict) for key in suTrieDict.keys()]
@@ -172,22 +181,24 @@ def compress():
     pool.join()
     return suTrieDict
 
+def compress_seq():
+    [mid_compress(AS,Trie_Dict) for AS in Trie_Dict.keys()]
 
-before = sum([len(Trie_Dict[AS].dec_items()) for AS in Trie_Dict.keys()])
 # print_dict(Trie_Dict)
-[mid_compress(AS,Trie_Dict) for AS in Trie_Dict.keys()]
 
-# Trie_Dict = compress()
-
-after = sum([len(Trie_Dict[AS].dec_items()) for AS in Trie_Dict.keys()])
+compress_seq()
+# Trie_Dict = compress_multi()
 
 
-diff = before - after
-p = float(diff / float(before)) * 100.0
+# after = sum([len(Trie_Dict[key]) for key in Trie_Dict.keys()])
 
+
+# diff = before - after
+# p = float(diff / float(before)) * 100.0
+
+print_dict(Trie_Dict)
 
 # print before
-print_dict(Trie_Dict)
 # print len(Trie_Dict)
 # print after
 # print p, '%'
