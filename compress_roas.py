@@ -17,7 +17,8 @@ def getDictCSV(filename):
     for line in file:
         rip += 1
         line = line[:-1].split(',')
-        AS = line[1]
+        AS = line[1][:-1]
+        # print AS
         IP = line[0]
         Time = '13:37'
         ip = IP.split('-')
@@ -163,13 +164,13 @@ def print_dict(Dict):
 # IPfilenameCSV = "/home/osagga/Documents/compress-roas/Data files/bgp_announcements.txt"
 # IPfilenameTXT = "/home/osagga/Documents/compress-roas/Data files/ip_list.txt"
 IPfilenameTXT = "/home/osagga/Documents/compress-roas/Data files/roa_list.txt"
-# IPfilenameCSV = "/home/osagga/Documents/compress-roas/Data files/bgp_valid_announcements.txt"
-IPfilenameCSV = "/home/osagga/Documents/compress-roas/Data files/bgp_announcements.txt"
+IPfilenameCSV = "/home/osagga/Documents/compress-roas/Data files/bgp_valid_announcements.txt"
+# IPfilenameCSV = "/home/osagga/Documents/compress-roas/Data files/bgp_announcements.txt"
 
 # Trie_Dict = getDictTXT(IPfilenameTXT)
 Trie_Dict = getDictCSV(IPfilenameCSV)
 
-# before = sum([len(Trie_Dict[key]) for key in Trie_Dict.keys()])
+before = sum([len(Trie_Dict[key]) for key in Trie_Dict.keys()])
 
 def compress_multi():
     manager = Manager()
@@ -190,15 +191,15 @@ compress_seq()
 # Trie_Dict = compress_multi()
 
 
-# after = sum([len(Trie_Dict[key]) for key in Trie_Dict.keys()])
+after = sum([len(Trie_Dict[key]) for key in Trie_Dict.keys()])
 
 
-# diff = before - after
-# p = float(diff / float(before)) * 100.0
+diff = before - after
+p = float(diff / float(before)) * 100.0
 
-print_dict(Trie_Dict)
+# print_dict(Trie_Dict)
 
-# print before
-# print len(Trie_Dict)
-# print after
-# print p, '%'
+print before
+print len(Trie_Dict)
+print after
+print p, '%'
