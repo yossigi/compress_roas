@@ -1,7 +1,4 @@
-#!/usr/bin/python
-#
-# $Id$
-#
+#! /usr/bin/python
 
 import os
 import argparse
@@ -46,7 +43,6 @@ def getROA(output):
             try:
                 # check if the maxLength exists.
                 maxLength = int(ip[1])
-                # print prefixLength
                 if maxLength < prefixLength:
                     # If you found maxLength and that maxLength is shorter than the prefixLength, then skip this prefix.
                     continue
@@ -91,7 +87,6 @@ def mid_compress(AS,mDict):
 
             # Check if the node is an prefix (not just a connecting node) and that 2 children exist with prefix's and value's
             if node.value is not NULL and fchild.value is not NULL and schild is not None and schild.value is not NULL:
-                # print 'HI!'
                 # To check if the maxLength of the parent is higher or equal to the max(children's  maxLength)
                 if node.value[3] >= maxML([fchild, schild]):
                     pass # No need to change the maxLength in this case.
@@ -99,18 +94,13 @@ def mid_compress(AS,mDict):
                     # Only update the max length of the parent if it's less than the max of children
                     node.value[3] = minML([fchild, schild])
                 # Only hide a child if the parent's max length is covering the child's max length
-                # b_list = [node,fchild,schild]
-                # print 'before:',b_list
                 if node.value[3] >= fchild.value[3]:
                     key = binTools.prefix_to_key(fchild.value[2])
                     del Trie[key]
-                    # del b_list[1]
                 # Only hide a child if the parent's max length is covering the child's max length
                 if node.value[3] >= schild.value[3]:
                     key = binTools.prefix_to_key(schild.value[2])
                     del Trie[key]
-                    # del b_list[-1]
-                # print 'after:',b_list
         def minML(childList):
             ''' This method should return the min of the children's maxLength'''
             numlist = list()
@@ -129,21 +119,24 @@ def mid_compress(AS,mDict):
     mDict[AS] = final_compress(mDict[AS])
 
 def print_dict(Dict):
+    ''' Print all the data '''
     for AS in Dict.values():
         for prefix in AS.dec_iternodes():
             print prefix
 
 def compress_multi():
+    ''' To do the compression in parallel, NOT working efficiently yet!'''
     manager = Manager()
     pool = Pool(8)
     suTrieDict = manager.dict(Trie_Dict)
     [pool.apply_async(mid_compress, (key,suTrieDict)) for key in suTrieDict.keys()]
-    # [mid_compress(key,suTrieDict) for key in suTrieDict.keys()]
     pool.close()
     pool.join()
     return suTrieDict
 
 def compress_seq():
+    ''' To do the compression normally in sequential,
+        For now, this is faster then the parallel compression.'''
     [mid_compress(AS,Trie_Dict) for AS in Trie_Dict.keys()]
 
 Trie_Dict = getROA(output) #To generate the dictionary as an input to the Trie.
@@ -151,4 +144,4 @@ Trie_Dict = getROA(output) #To generate the dictionary as an input to the Trie.
 compress_seq() # Compress the data in the Trie.
 # Trie_Dict = compress_multi()
 
-print_dict(Trie_Dict) # Print the output to stdout.
+print_dict(Trie_Dict) # Print the output to StdOut.
