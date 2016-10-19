@@ -154,6 +154,7 @@ def mid_compress_list(ASList,mDict):
     for AS in ASList:
         mDict[AS] = Trie(**mDict[AS])
         mDict[AS] = final_compress(mDict[AS])
+        
 
 def mid_compress(AS,mDict):
     def final_compress(Trie):
@@ -212,10 +213,10 @@ def mid_compress(AS,mDict):
                 numlist += [child.value[3]]  # Add the MaxLength to the list
             return max(numlist)
         compress_Tries(Trie._root)
-        return Trie
+        return dict(Trie)
 
-    mDict[AS] = Trie(**mDict[AS])
-    mDict[AS] = final_compress(mDict[AS])
+    t = Trie(**mDict[AS])
+    mDict[AS] = final_compress(t)
 
 def print_dict(Dict):
     for AS in Dict.values():
@@ -237,6 +238,7 @@ Trie_Dict = getDictCSV(IPfilenameCSV)
 def compress_multi():
     manager = Manager()
     pool = Pool(cpu_count())
+    print "Running in parallel over", cpu_count(), "cores"
     suTrieDict = manager.dict(Trie_Dict)
     def chunks(l, n):
         """Yield successive n-sized chunks from l."""
@@ -260,7 +262,7 @@ def compress_seq():
 
 begin = time.time()
 compress_seq()
-# Trie_Dict = compress_multi()
+#Trie_Dict = compress_multi()
 end = time.time()
 print "total compression time:", end- begin, "seconds"
 
