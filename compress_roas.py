@@ -4,7 +4,6 @@ Created on Wed Aug 03 12:14:35 2016
 @author: Omar Sagga
 """
 
-import resource
 import map_functions as binTools
 from IPSortedStringTrie import Trie, NULL
 from multiprocessing import Process, Manager, Pool,cpu_count
@@ -12,14 +11,14 @@ from multiprocessing import Process, Manager, Pool,cpu_count
 def getDictCSV(filename):
     IPdict = dict()
     Trie_dict = {}
-    rip = 0
+    # rip = 0
     file = open(filename, 'r')
     for line in file:
-        rip += 1
+        # rip += 1
         line = line[:-1].split(',')
         AS = line[1][:-1]
         IP = line[0]
-        Time = '13:37'
+        Time = ''
         ip = IP.split('-')
         prefix = ip[0]
         key = binTools.prefix_to_key(prefix)
@@ -46,7 +45,7 @@ def getDictCSV(filename):
             Trie_dict[AS] = ipReady(Time,AS, prefix, maxLength,key)
 
     file.close()
-    print "Number of ip's is:", rip
+    # print "Number of ip's is:", rip
     return Trie_dict
 
 def getDictTXT(filename):
@@ -226,9 +225,9 @@ def print_dict(Dict):
 # IPfilenameTXT = "/home/osagga/Documents/compress-roas/Data files/ip_list_v2.txt"
 # IPfilenameCSV = "/home/osagga/Documents/compress-roas/Data files/bgp_announcements.txt"
 # IPfilenameTXT = "/home/osagga/Documents/compress-roas/Data files/ip_list.txt"
-IPfilenameTXT = "/home/osagga/Documents/compress-roas/Data files/roa_list.txt"
-# IPfilenameCSV = "/home/osagga/Documents/compress-roas/Data files/bgp_valid_announcements.txt"
-IPfilenameCSV = "/home/osagga/Documents/compress-roas/Data files/bgp_announcements.txt"
+# IPfilenameTXT = "/home/osagga/Documents/compress-roas/Data files/roa_list.txt"
+IPfilenameCSV = "/home/osagga/Documents/compress-roas/Data_files/bgp_valid_announcements.txt"
+# IPfilenameCSV = "/home/osagga/Documents/compress-roas/Data_files/bgp_announcements.txt"
 
 # You switch between these two depending on the format of your input
 
@@ -236,7 +235,7 @@ IPfilenameCSV = "/home/osagga/Documents/compress-roas/Data files/bgp_announcemen
 Trie_Dict = getDictCSV(IPfilenameCSV)
 
 # This is just a counter of how many prefix's in all of the Tries.
-# before = sum([len(Trie_Dict[key]) for key in Trie_Dict.keys()])
+before = sum([len(Trie_Dict[key]) for key in Trie_Dict.keys()])
 
 def compress_multi():
     manager = Manager()
@@ -265,15 +264,15 @@ compress_seq()
 # Trie_Dict = compress_multi()
 
 # This is another counter that does the same as 'before'.
-# after = sum([len(Trie_Dict[key]) for key in Trie_Dict.keys()])
+after = sum([len(Trie_Dict[key]) for key in Trie_Dict.keys()])
 
 
-# diff = before - after
-# p = float(diff / float(before)) * 100.0
+diff = before - after
+p = float(diff / float(before)) * 100.0
 
 # print_dict(Trie_Dict)
 
 # print "Number of prefix's (ROA's):",len(Trie_Dict)
-# print "Number of prefix's before:",before
-# print "Number of prefix's after:",after
-# print p, '%'
+print "Number of prefix's before:",before
+print "Number of prefix's after:",after
+print p, '%'
