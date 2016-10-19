@@ -7,6 +7,7 @@ Created on Wed Aug 03 12:14:35 2016
 import map_functions as binTools
 from IPSortedStringTrie import Trie, NULL
 from multiprocessing import Process, Manager, Pool,cpu_count
+import time
 
 def getDictCSV(filename):
     IPdict = dict()
@@ -222,12 +223,8 @@ def print_dict(Dict):
             print prefix
 
 
-# IPfilenameTXT = "/home/osagga/Documents/compress-roas/Data files/ip_list_v2.txt"
-# IPfilenameCSV = "/home/osagga/Documents/compress-roas/Data files/bgp_announcements.txt"
-# IPfilenameTXT = "/home/osagga/Documents/compress-roas/Data files/ip_list.txt"
-# IPfilenameTXT = "/home/osagga/Documents/compress-roas/Data files/roa_list.txt"
-IPfilenameCSV = "/home/osagga/Documents/compress-roas/Data_files/bgp_valid_announcements.txt"
-# IPfilenameCSV = "/home/osagga/Documents/compress-roas/Data_files/bgp_announcements.txt"
+#IPfilenameCSV = "Data_files/bgp_valid_announcements.txt"
+IPfilenameCSV = "Data_files/bgp_announcements.txt"
 
 # You switch between these two depending on the format of your input
 
@@ -235,7 +232,7 @@ IPfilenameCSV = "/home/osagga/Documents/compress-roas/Data_files/bgp_valid_annou
 Trie_Dict = getDictCSV(IPfilenameCSV)
 
 # This is just a counter of how many prefix's in all of the Tries.
-before = sum([len(Trie_Dict[key]) for key in Trie_Dict.keys()])
+#before = sum([len(Trie_Dict[key]) for key in Trie_Dict.keys()])
 
 def compress_multi():
     manager = Manager()
@@ -260,19 +257,23 @@ def compress_seq():
 
 # print_dict(Trie_Dict)
 
+
+begin = time.time()
 compress_seq()
 # Trie_Dict = compress_multi()
+end = time.time()
+print "total compression time:", end- begin, "seconds"
 
 # This is another counter that does the same as 'before'.
-after = sum([len(Trie_Dict[key]) for key in Trie_Dict.keys()])
+#after = sum([len(Trie_Dict[key]) for key in Trie_Dict.keys()])
 
 
-diff = before - after
-p = float(diff / float(before)) * 100.0
+#diff = before - after
+#p = float(diff / float(before)) * 100.0
 
 # print_dict(Trie_Dict)
 
 # print "Number of prefix's (ROA's):",len(Trie_Dict)
-print "Number of prefix's before:",before
-print "Number of prefix's after:",after
-print p, '%'
+#print "Number of prefix's before:",before
+#print "Number of prefix's after:",after
+#print p, '%'
