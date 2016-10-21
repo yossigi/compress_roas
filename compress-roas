@@ -2,7 +2,7 @@
 
 import os
 import argparse
-from IPSortedStringTrie import Trie, NULL
+from pytrie import NULL,SortedStringTrie as Trie
 import map_functions as binTools
 import subprocess
 
@@ -133,6 +133,6 @@ def compress_seq():
 
 Trie_Dict = getROA(output) #To generate the dictionary as an input to the Trie.
 
-# compress_seq() # Compress the data in the Trie.
+compress_seq() # Compress the data in the Trie.
 
 print_dict(Trie_Dict) # Print the output.
