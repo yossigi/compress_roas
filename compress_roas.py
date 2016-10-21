@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -
 
-import map_functions as binTools
-from IPSortedStringTrie import Trie, NULL
+from pytrie import NULL,SortedStringTrie as Trie
+import netaddr
 from multiprocessing import Process, Manager, Pool,cpu_count
 import time
 
@@ -18,7 +18,7 @@ def getDictCSV(filename):
         Time = ''
         ip = IP.split('-')
         prefix = ip[0]
-        key = binTools.prefix_to_key(prefix)
+        key = prefix_to_key(prefix)
         prefixLength = len(key.split('$')[1])
         # if int(key[0]) == 4:
         #     maxLength = 32
@@ -61,7 +61,7 @@ def getDictTXT(filename):
             ip = ip.split('-')
             prefix = ip[0]
             # print prefix
-            key = binTools.prefix_to_key(prefix)
+            key = prefix_to_key(prefix)
             # print key
             prefixLength = len(key.split('$')[1])
             try:
@@ -123,12 +123,12 @@ def mid_compress_list(ASList,mDict):
                 # b_list = [node,fchild,schild]
                 # print 'before:',b_list
                 if node.value[3] >= fchild.value[3]:
-                    key = binTools.prefix_to_key(fchild.value[2])
+                    key = prefix_to_key(fchild.value[2])
                     del Trie[key]
                     # del b_list[1]
                 # Only hide a child if the parent's max length is covering the child's max length
                 if node.value[3] >= schild.value[3]:
-                    key = binTools.prefix_to_key(schild.value[2])
+                    key = prefix_to_key(schild.value[2])
                     del Trie[key]
                     # del b_list[-1]
                 # print 'after:',b_list
@@ -145,11 +145,12 @@ def mid_compress_list(ASList,mDict):
                 numlist += [child.value[3]]  # Add the MaxLength to the list
             return max(numlist)
         compress_Tries(Trie._root)
-        return Trie
+        return dict(Trie)
+
 
     for AS in ASList:
-        mDict[AS] = Trie(**mDict[AS])
-        mDict[AS] = final_compress(mDict[AS])
+        t = Trie(**mDict[AS])
+        mDict[AS] = final_compress(t)
 
 
 def mid_compress(AS,mDict):
@@ -187,12 +188,12 @@ def mid_compress(AS,mDict):
                 # b_list = [node,fchild,schild]
                 # print 'before:',b_list
                 if node.value[3] >= fchild.value[3]:
-                    key = binTools.prefix_to_key(fchild.value[2])
+                    key = prefix_to_key(fchild.value[2])
                     del Trie[key]
                     # del b_list[1]
                 # Only hide a child if the parent's max length is covering the child's max length
                 if node.value[3] >= schild.value[3]:
-                    key = binTools.prefix_to_key(schild.value[2])
+                    key = prefix_to_key(schild.value[2])
                     del Trie[key]
                     # del b_list[-1]
                 # print 'after:',b_list
@@ -214,14 +215,30 @@ def mid_compress(AS,mDict):
     t = Trie(**mDict[AS])
     mDict[AS] = final_compress(t)
 
+def prefix_to_key(prefix):
+    ''' A function given a prefix and AS generates a binary key to be used in a Trie.'''
+    prefix = netaddr.IPNetwork(prefix)
+    address = prefix.ip.bits().replace(".", "").replace(":","")
+    l = int(prefix.cidr.hostmask.bin, 2)
+    while(l > 0):
+        address = address[:-1]
+        l >>= 1
+
+    # Building the key
+    # No need for the first '$', the root is one at the begining.
+    key = str(prefix.version) + '$'
+    key +=  address
+    return key
+
 def print_dict(Dict):
+    ''' Print all the data '''
     for AS in Dict.values():
-        for prefix in AS.dec_iternodes():
-            print prefix
+        for prefix in AS.values():
+            print str(prefix[0]) ,  str(prefix[1]) , str(prefix[2]) +'-'+ str(prefix[3])
 
 
-# IPfilenameCSV = "/home/osagga/Documents/compress-roas/Data_files/bgp_valid_announcements.txt"
-IPfilenameCSV = "/home/osagga/Documents/compress-roas/Data_files/bgp_announcements.txt"
+IPfilenameCSV = "/home/osagga/Documents/compress-roas/Data_files/bgp_valid_announcements.txt"
+# IPfilenameCSV = "/home/osagga/Documents/compress-roas/Data_files/bgp_announcements.txt"
 
 # You switch between these two depending on the format of your input
 
