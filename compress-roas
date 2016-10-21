@@ -124,16 +124,6 @@ def print_dict(Dict):
         for prefix in AS.dec_iternodes():
             print prefix
 
-def compress_multi():
-    ''' To do the compression in parallel, NOT working efficiently yet!'''
-    manager = Manager()
-    pool = Pool(8)
-    suTrieDict = manager.dict(Trie_Dict)
-    [pool.apply_async(mid_compress, (key,suTrieDict)) for key in suTrieDict.keys()]
-    pool.close()
-    pool.join()
-    return suTrieDict
-
 def compress_seq():
     ''' To do the compression normally in sequential,
         For now, this is faster then the parallel compression.'''
@@ -142,6 +132,5 @@ def compress_seq():
 Trie_Dict = getROA(output) #To generate the dictionary as an input to the Trie.
 
 compress_seq() # Compress the data in the Trie.
-# Trie_Dict = compress_multi()
 
 print_dict(Trie_Dict) # Print the output.
