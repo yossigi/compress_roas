@@ -114,9 +114,9 @@ def mid_compress(AS,mDict):
                 numlist += [child.value[3]]  # Add the MaxLength to the list
             return max(numlist)
         compress_Tries(Trie._root)
-        return Trie
-    mDict[AS] = Trie(**mDict[AS])
-    mDict[AS] = final_compress(mDict[AS])
+        return dict(Trie)
+    t = Trie(**mDict[AS])
+    mDict[AS] = final_compress(t)
 
 def print_dict(Dict):
     ''' Print all the data '''
@@ -144,4 +144,4 @@ Trie_Dict = getROA(output) #To generate the dictionary as an input to the Trie.
 compress_seq() # Compress the data in the Trie.
 # Trie_Dict = compress_multi()
 
-print_dict(Trie_Dict) # Print the output to StdOut.
+print_dict(Trie_Dict) # Print the output.
