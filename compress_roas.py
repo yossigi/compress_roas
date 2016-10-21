@@ -1,8 +1,4 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Wed Aug 03 12:14:35 2016
-@author: Omar Sagga
-"""
+# -*- coding: utf-8 -
 
 import map_functions as binTools
 from IPSortedStringTrie import Trie, NULL
@@ -154,7 +150,7 @@ def mid_compress_list(ASList,mDict):
     for AS in ASList:
         mDict[AS] = Trie(**mDict[AS])
         mDict[AS] = final_compress(mDict[AS])
-        
+
 
 def mid_compress(AS,mDict):
     def final_compress(Trie):
@@ -224,8 +220,8 @@ def print_dict(Dict):
             print prefix
 
 
-#IPfilenameCSV = "Data_files/bgp_valid_announcements.txt"
-IPfilenameCSV = "Data_files/bgp_announcements.txt"
+# IPfilenameCSV = "/home/osagga/Documents/compress-roas/Data_files/bgp_valid_announcements.txt"
+IPfilenameCSV = "/home/osagga/Documents/compress-roas/Data_files/bgp_announcements.txt"
 
 # You switch between these two depending on the format of your input
 
@@ -233,7 +229,7 @@ IPfilenameCSV = "Data_files/bgp_announcements.txt"
 Trie_Dict = getDictCSV(IPfilenameCSV)
 
 # This is just a counter of how many prefix's in all of the Tries.
-#before = sum([len(Trie_Dict[key]) for key in Trie_Dict.keys()])
+before = sum([len(Trie_Dict[key]) for key in Trie_Dict.keys()])
 
 def compress_multi():
     manager = Manager()
@@ -267,15 +263,15 @@ end = time.time()
 print "total compression time:", end- begin, "seconds"
 
 # This is another counter that does the same as 'before'.
-#after = sum([len(Trie_Dict[key]) for key in Trie_Dict.keys()])
+after = sum([len(Trie_Dict[key]) for key in Trie_Dict.keys()])
 
 
-#diff = before - after
-#p = float(diff / float(before)) * 100.0
+diff = before - after
+p = float(diff / float(before)) * 100.0
 
 # print_dict(Trie_Dict)
 
-# print "Number of prefix's (ROA's):",len(Trie_Dict)
-#print "Number of prefix's before:",before
-#print "Number of prefix's after:",after
-#print p, '%'
+print "Number of prefix's (ROA's):",len(Trie_Dict)
+print "Number of prefix's before:",before
+print "Number of prefix's after:",after
+print p, '%'
