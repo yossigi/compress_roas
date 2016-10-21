@@ -1,0 +1,147 @@
+#! /usr/bin/python
+
+import os
+import argparse
+from IPSortedStringTrie import Trie, NULL
+import map_functions as binTools
+import subprocess
+
+
+def check_dir(d):
+    ''' A function to check if the dir inputted is valid'''
+    if not os.path.isdir(d):
+        raise argparse.ArgumentTypeError("%r is not a directory" % d)
+    return d
+
+parser = argparse.ArgumentParser(description ="Scan for ROA's and compress them")
+parser.add_argument("rcynic_dir", nargs = "+", type = check_dir,
+                     help = "rcynic authenticated output directory")
+
+args = parser.parse_args()
+
+# Here we call the utility "scan_roas" to get the list of (ASN, IP/prefix, - maxLength)
+terminal = subprocess.Popen(['scan_roas' , args.rcynic_dir[0] ], stdout=subprocess.PIPE)
+output = terminal.communicate()[0]
+
+
+def getROA(output):
+    '''This function take the output of scan_roas and extract the data (prefix,AS,maxLength)
+        and return a dictionary with all the unique* prefix's from input'''
+    Trie_dict = dict()
+    output = output[:-1].split('\n') # Split the data line by line.
+    for line in output:
+        line = line.split(' ')
+        Time = line[0] # Take the time of the ROA signing.
+        AS = line[1] # AS number
+        IP = line[2:] # the prefix with '/prefixLength'
+        for ip in IP:
+            # In case an ROA have more than one prefix
+            ip = ip.split('-') # To get the maxLength if it's there
+            prefix = ip[0]
+            key = binTools.prefix_to_key(prefix) # generate the key to be used in the Trie
+            prefixLength = len(key.split('$')[1]) # Because of the way I construct the key. [check map_functions.py]
+            try:
+                # check if the maxLength exists.
+                maxLength = int(ip[1])
+                if maxLength < prefixLength:
+                    # If you found maxLength and that maxLength is shorter than the prefixLength, then skip this prefix.
+                    continue
+            except IndexError: # If a maxLength doesn't exist.
+                maxLength = prefixLength
+            if AS in Trie_dict:
+                if key in Trie_dict[AS]:
+                    Trie_dict[AS][key][3] = max(maxLength,Trie_dict[AS][key][3])
+                else:
+                    Trie_dict[AS][key] = [Time, AS, prefix, maxLength]
+            else:
+                Trie_dict[AS] = createItem(Time,AS, prefix, maxLength,key)
+
+    return Trie_dict
+
+
+def createItem(Time,AS,prefix, maxLength,key):
+  ''' Return a dictionary item object of the input '''
+  return {key: [Time, AS, prefix, maxLength]}
+
+def mid_compress(AS,mDict):
+    def final_compress(Trie):
+        def compress_Tries(node):
+            ''' This function compresses the prefix's '''
+            if node is None or not node.children:
+                # When you reach a leaf node, just stop.
+                return
+
+            g = node.children.iteritems()
+
+            # To get pointers on the children nodes.
+            fchild = node.children.get(str(g.next()[0]))
+            try:
+                schild = node.children.get(str(g.next()[0]))
+            # in case a second child doesn't exist.
+            except StopIteration:
+                schild = None
+
+            # The recursive call to reach the end of the Trie.
+            compress_Tries(fchild)
+            compress_Tries(schild)
+
+            # Check if the node is an prefix (not just a connecting node) and that 2 children exist with prefix's and value's
+            if node.value is not NULL and fchild.value is not NULL and schild is not None and schild.value is not NULL:
+                # To check if the maxLength of the parent is higher or equal to the max(children's  maxLength)
+                if node.value[3] >= maxML([fchild, schild]):
+                    pass # No need to change the maxLength in this case.
+                else:
+                    # Only update the max length of the parent if it's less than the max of children
+                    node.value[3] = minML([fchild, schild])
+                # Only hide a child if the parent's max length is covering the child's max length
+                if node.value[3] >= fchild.value[3]:
+                    key = binTools.prefix_to_key(fchild.value[2])
+                    del Trie[key]
+                # Only hide a child if the parent's max length is covering the child's max length
+                if node.value[3] >= schild.value[3]:
+                    key = binTools.prefix_to_key(schild.value[2])
+                    del Trie[key]
+        def minML(childList):
+            ''' This method should return the min of the children's maxLength'''
+            numlist = list()
+            for child in childList:
+                numlist += [child.value[3]]  # Add the MaxLength to the list
+            return min(numlist)
+        def maxML(childList):
+            ''' This method should return the max of the children's maxLength'''
+            numlist = list()
+            for child in childList:
+                numlist += [child.value[3]]  # Add the MaxLength to the list
+            return max(numlist)
+        compress_Tries(Trie._root)
+        return dict(Trie)
+    t = Trie(**mDict[AS])
+    mDict[AS] = final_compress(t)
+
+def print_dict(Dict):
+    ''' Print all the data '''
+    for AS in Dict.values():
+        for prefix in AS.dec_iternodes():
+            print prefix
+
+def compress_multi():
+    ''' To do the compression in parallel, NOT working efficiently yet!'''
+    manager = Manager()
+    pool = Pool(8)
+    suTrieDict = manager.dict(Trie_Dict)
+    [pool.apply_async(mid_compress, (key,suTrieDict)) for key in suTrieDict.keys()]
+    pool.close()
+    pool.join()
+    return suTrieDict
+
+def compress_seq():
+    ''' To do the compression normally in sequential,
+        For now, this is faster then the parallel compression.'''
+    [mid_compress(AS,Trie_Dict) for AS in Trie_Dict.keys()]
+
+Trie_Dict = getROA(output) #To generate the dictionary as an input to the Trie.
+
+compress_seq() # Compress the data in the Trie.
+# Trie_Dict = compress_multi()
+
+print_dict(Trie_Dict) # Print the output.
