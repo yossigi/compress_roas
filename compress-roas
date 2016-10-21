@@ -1,7 +1,6 @@
 #! /usr/bin/python
 
-import os
-import argparse
+import os , argparse
 from pytrie import NULL,SortedStringTrie as Trie
 import netaddr
 import subprocess
@@ -33,7 +32,7 @@ def getROA(output):
         line = line.split(' ')
         Time = line[0] # Take the time of the ROA signing.
         AS = line[1] # AS number
-        IP = line[2:] # the prefix with '/prefixLength'
+        IP = line[2:] # the prefix or prefix's with '/prefixLength'
         for ip in IP:
             # In case an ROA have more than one prefix
             ip = ip.split('-') # To get the maxLength if it's there
@@ -58,12 +57,11 @@ def getROA(output):
 
     return Trie_dict
 
-
 def createItem(Time,AS,prefix, maxLength,key):
   ''' Return a dictionary item object of the input '''
   return {key: [Time, AS, prefix, maxLength]}
 
-def mid_compress(AS,mDict):
+def compress(AS,mDict):
     def final_compress(Trie):
         def compress_Tries(node):
             ''' This function compresses the prefix's '''
@@ -124,7 +122,8 @@ def print_dict(Dict):
     ''' Print all the data '''
     for AS in Dict.values():
         for prefix in AS.values():
-            print str(prefix[0]) ,  str(prefix[1]) , str(prefix[2]) +'-'+ str(prefix[3])
+            prefix = str(prefix[0]) +' '+ str(prefix[1]) +' '+ str(prefix[2]) + '-' + str(prefix[3])
+            print(prefix)
 
 def prefix_to_key(prefix):
     ''' A function given a prefix generates a binary key to be used in a Trie.'''
@@ -141,12 +140,11 @@ def prefix_to_key(prefix):
     return key
 
 def compress_seq():
-    ''' To do the compression normally in sequential,
-        For now, this is faster then the parallel compression.'''
-    [mid_compress(AS,Trie_Dict) for AS in Trie_Dict.keys()]
+    '''do the compression for each AS'''
+    [compress(AS,prefix_dict) for AS in prefix_dict.keys()]
 
-Trie_Dict = getROA(output) #To generate the dictionary as an input to the Trie.
+prefix_dict = getROA(output) #To generate the dictionary as an input to the Trie.
 
 compress_seq() # Compress the data in the Trie.
 
-print_dict(Trie_Dict) # Print the output.
+print_dict(prefix_dict) # Print the output.
