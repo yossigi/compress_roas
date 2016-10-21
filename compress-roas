@@ -3,7 +3,7 @@
 import os
 import argparse
 from pytrie import NULL,SortedStringTrie as Trie
-import map_functions as binTools
+import netaddr
 import subprocess
 
 
@@ -38,7 +38,7 @@ def getROA(output):
             # In case an ROA have more than one prefix
             ip = ip.split('-') # To get the maxLength if it's there
             prefix = ip[0]
-            key = binTools.prefix_to_key(prefix) # generate the key to be used in the Trie
+            key = prefix_to_key(prefix) # generate the key to be used in the Trie
             prefixLength = len(key.split('$')[1]) # Because of the way I construct the key. [check map_functions.py]
             try:
                 # check if the maxLength exists.
@@ -95,11 +95,11 @@ def mid_compress(AS,mDict):
                     node.value[3] = minML([fchild, schild])
                 # Only hide a child if the parent's max length is covering the child's max length
                 if node.value[3] >= fchild.value[3]:
-                    key = binTools.prefix_to_key(fchild.value[2])
+                    key = prefix_to_key(fchild.value[2])
                     del Trie[key]
                 # Only hide a child if the parent's max length is covering the child's max length
                 if node.value[3] >= schild.value[3]:
-                    key = binTools.prefix_to_key(schild.value[2])
+                    key = prefix_to_key(schild.value[2])
                     del Trie[key]
         def minML(childList):
             ''' This method should return the min of the children's maxLength'''
@@ -125,6 +125,20 @@ def print_dict(Dict):
     for AS in Dict.values():
         for prefix in AS.values():
             print str(prefix[0]) ,  str(prefix[1]) , str(prefix[2]) +'-'+ str(prefix[3])
+
+def prefix_to_key(prefix):
+    ''' A function given a prefix generates a binary key to be used in a Trie.'''
+    prefix = netaddr.IPNetwork(prefix)
+    address = prefix.ip.bits().replace(".", "").replace(":","")
+    l = int(prefix.cidr.hostmask.bin, 2)
+    while(l > 0):
+        address = address[:-1]
+        l >>= 1
+
+    # Building the key
+    key = str(prefix.version) + '$'
+    key +=  address
+    return key
 
 def compress_seq():
     ''' To do the compression normally in sequential,

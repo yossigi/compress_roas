@@ -20,9 +20,3 @@ if by it's own just to print out the data commpressed:
 ```shell
   compress-roas [roa-directory]
 ```
-# ROA-Requester
-
-A python script given the directory of the BGP config and private key should genarate a ROA request.
-```shell
-  roa-requester [bgp-config-file-directory] [privateKey-directory]
-```
