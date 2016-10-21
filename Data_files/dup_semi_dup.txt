@@ -1,0 +1,6 @@
+[Command: python -u C:\Users\osagg\Documents\ROA_PyTrie\utill\find_dup.py]
+@prefix: 191.99.0.0/16 AS: 27738 maxLength: 16
+@prefix: 186.15.64.0/18 AS: 52228 maxLength: 18
+@prefix: 186.15.128.0/17 AS: 52228 maxLength: 17
+@prefix: 186.64.128.0/17 AS: 52228 maxLength: 17
+[Finished in 0.037s]

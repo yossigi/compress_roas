@@ -11,6 +11,7 @@ def prefix_to_key(prefix):
         l >>= 1
 
     # Building the key
+    # No need for the first '$', the root is one at the begining.
     key = str(prefix.version) + '$'
     key +=  address
     return key
