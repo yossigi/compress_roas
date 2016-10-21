@@ -113,16 +113,18 @@ def mid_compress(AS,mDict):
             for child in childList:
                 numlist += [child.value[3]]  # Add the MaxLength to the list
             return max(numlist)
+
         compress_Tries(Trie._root)
         return dict(Trie)
+
     t = Trie(**mDict[AS])
     mDict[AS] = final_compress(t)
 
 def print_dict(Dict):
     ''' Print all the data '''
     for AS in Dict.values():
-        for prefix in AS.dec_iternodes():
-            print prefix
+        for prefix in AS.values():
+            print str(prefix[0]) ,  str(prefix[1]) , str(prefix[2]) +'-'+ str(prefix[3])
 
 def compress_seq():
     ''' To do the compression normally in sequential,
@@ -131,6 +133,6 @@ def compress_seq():
 
 Trie_Dict = getROA(output) #To generate the dictionary as an input to the Trie.
 
-compress_seq() # Compress the data in the Trie.
+# compress_seq() # Compress the data in the Trie.
 
 print_dict(Trie_Dict) # Print the output.
