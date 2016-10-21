@@ -9,6 +9,10 @@ per line of all the result data.
 
 # How to use:
 
+You need to have these Python pacakges:
+ - Pytrie
+ - netaddr
+
 if to be used with rpki-rtr to create a database for the server:
 
 ```shell
