@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -
 
 from pytrie import NULL,SortedStringTrie as Trie
-import netaddr
+import netaddr,os
 from multiprocessing import Process, Manager, Pool,cpu_count
 import time
 
-def getDictCSV(filename):
+def getStyle_1(filename):
     IPdict = dict()
     Trie_dict = {}
     # rip = 0
@@ -20,12 +20,6 @@ def getDictCSV(filename):
         prefix = ip[0]
         key = prefix_to_key(prefix)
         prefixLength = len(key.split('$')[1])
-        # if int(key[0]) == 4:
-        #     maxLength = 32
-        # elif int(key[0]) == 6:
-        #     maxLength = 128
-        # else:
-        #     print key
         try:
             maxLength = int(ip[1])
             if maxLength < prefixLength:
@@ -45,7 +39,7 @@ def getDictCSV(filename):
     # print "Number of ip's is:", rip
     return Trie_dict
 
-def getDictTXT(filename):
+def getStyle_2(filename):
     Trie_dict = {}
     file = open(filename, 'r')
     roa = 0
@@ -237,13 +231,14 @@ def print_dict(Dict):
             print str(prefix[0]) ,  str(prefix[1]) , str(prefix[2]) +'-'+ str(prefix[3])
 
 
-IPfilenameCSV = "/home/osagga/Documents/compress-roas/Data_files/bgp_valid_announcements.txt"
-# IPfilenameCSV = "/home/osagga/Documents/compress-roas/Data_files/bgp_announcements.txt"
+IPfilenameS_1 = os.path.abspath("Data_files/bgp_valid_announcements.txt")
+# IPfilenameS_1 = os.path.abspath("Data_files/bgp_announcements.txt")
+IPfilenameS_2 = os.path.abspath("Data_files/roa_list.txt")
 
 # You switch between these two depending on the format of your input
 
-# Trie_Dict = getDictTXT(IPfilenameTXT)
-Trie_Dict = getDictCSV(IPfilenameCSV)
+# Trie_Dict = getStyle_1(IPfilenameS_1)
+Trie_Dict = getStyle_2(IPfilenameS_2)
 
 # This is just a counter of how many prefix's in all of the Tries.
 before = sum([len(Trie_Dict[key]) for key in Trie_Dict.keys()])
