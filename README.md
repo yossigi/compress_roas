@@ -1,4 +1,4 @@
-# compress-roas for RPKI-rtr
+# compress-ROA's for RPKI-rtr
 A python script that wade through the ROAs that rcynic collects and compress it and then output:
 
 ```shell
@@ -9,20 +9,20 @@ per line of all the result data.
 
 # How to use:
 
-You need to have these Python pacakges:
+You need to have these Python packages:
  - Pytrie
  - netaddr
 
-if to be used with rpki-rtr to create a database for the server:
+If to be used with rpki-rtr to create a database for the server:
 
 ```shell
 rpki-rtr cronjob --scan-roas compress-roas [roa-directory] [server-directory]
 ```
 
-### if to be used to test preformance and comprese a set of prefix's, use the [name] branch.
+### if to be used to test performance and compress a set of prefix's, use the experimental branch.
 
-if by it's own just to print out the data commpressed:
+If by it's own just to print out the data compressed:
 
 ```shell
-  compress-roas [roa-directory]
+  Compress-roas [roa-directory]
 ```
