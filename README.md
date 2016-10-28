@@ -14,16 +14,11 @@ You need to have these Python packages:
  - Pytrie
  - netaddr
 
-If to be used with rpki-rtr to create a database for the server:
+To use with rpki-rtr to create a database for the server:
 
 ```shell
 rpki-rtr cronjob --scan-roas compress-roas [roa-directory] [server/PDU-directory]
 ```
 
-#### If to be used to evaluate, reproduce and compress a dataset of prefix's, use the "Reproducibility" branch.
-
-If by its own just to print out the data compressed:
-
-```shell
-  compress-roas [roa-directory]
-```
+# Reproducing results from "MaxLength Considered Harmful to the RPKI" (https://eprint.iacr.org/2016/1015.pdf)
+Use the "Reproducibility" branch.
