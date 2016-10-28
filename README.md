@@ -27,7 +27,7 @@ Example:
 95.187.117.0/24-24,39891
 ```
 
- The BGP data-sets use this style of input.
+Both "bgp_announcements.txt" and "bgp_valid_announcements.txt" have this style of input.
  You can only have 1 prefix per line.
  
 ## Style 2:
@@ -40,9 +40,23 @@ Example:
 
 2016-05-27T11:19:34Z 7020 196.29.128.0/19-24
 ```
- This style is the one used for the RPKI data-set, you can have multiple prefix's within a line line, and one ROA per line.
+"roa_list.txt" have this style of input, you can have multiple prefix's within a line line, and one ROA per line.
 
-After selecting the Style and the data-set, you simply run the script.
+
+After selecting the data-set with the correct style (commenting out the files not used in the script):
+
+```shell
+IPfilenameS_1 = os.path.abspath("Data_files/bgp_valid_announcements.txt")
+# IPfilenameS_1 = os.path.abspath("Data_files/bgp_announcements.txt")
+IPfilenameS_2 = os.path.abspath("Data_files/roa_list.txt")
+
+# You switch between these two depending on the format of your input
+
+# Trie_Dict = getStyle_1(IPfilenameS_1)
+Trie_Dict = getStyle_2(IPfilenameS_2)
+```
+
+simply run the script.
 
 ----
 Go to the master branch for how to use with RPKI-rtr tools directly.
