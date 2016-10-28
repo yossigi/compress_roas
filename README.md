@@ -1,16 +1,22 @@
+This branch has the data-sets used in "MaxLength Considered Harmful to the RPKI" (https://eprint.iacr.org/2016/1015.pdf) and below are the instructions on how to reproduce the results provided in the paper for each scenario. 
+
+### The data-sets located in the "Data_files" folder:
+- "bgp_announcements.txt" corresponds to "Full deployment, minimal ROAs, with maxLenth" scenario
+- "bgp_valid_announcements.txt" corresponds to "Today, minimal ROAs, no maxLength" scenario
+- "roa_list.txt" corresponds to "Today’s RPKI" scenario
 
 
 # How to use:
 
-This script just takes a list of prefix's and output the compressed list from the data. 
-You can use it for evaluation and stats, it uses the exact compression algorithm.
+The script takes a data-set of prefix's and outputs the compressed list of the data-set. 
+You can use it for evaluation and stats, it uses the exact compression algorithm as the script in master.
 
-You need to have these Python packages:
+In order to run the script, you need to have these Python packages installed:
 
  - Pytrie
  - netaddr
 
-To test a set of prefix's, you can use any of the two styles of input:
+To compress a data-set, you can use any of these two format-styles of input:
 
 ## Style 1:
 ```shell
@@ -21,7 +27,7 @@ Example:
 95.187.117.0/24-24,39891
 ```
 
- The BGP data-set uses this style of input.
+ The BGP data-sets use this style of input.
  You can only have 1 prefix per line.
  
 ## Style 2:
@@ -34,9 +40,9 @@ Example:
 
 2016-05-27T11:19:34Z 7020 196.29.128.0/19-24
 ```
- This style is the one used for ROA's from the RPKI data, you can have multiple prefix's per line, and one ROA per line.
+ This style is the one used for the RPKI data-set, you can have multiple prefix's within a line line, and one ROA per line.
 
-After selecting the Style and the data-set, you just simply run the script.
+After selecting the Style and the data-set, you simply run the script.
 
 ----
 Go to the master branch for how to use with RPKI-rtr tools directly.
