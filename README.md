@@ -1,4 +1,4 @@
-This branch has the data-sets used in "MaxLength Considered Harmful to the RPKI" (https://eprint.iacr.org/2016/1015.pdf) and below are the instructions on how to reproduce the results provided in the paper for each scenario. 
+This branch has the data-sets used in "MaxLength Considered Harmful to the RPKI" (https://eprint.iacr.org/2016/1015.pdf) and below are the instructions on how to reproduce the results provided in the paper. 
 
 ### The data-sets located in the "Data_files" folder:
 - "bgp_announcements.txt" corresponds to "Full deployment, minimal ROAs, with maxLenth" scenario
