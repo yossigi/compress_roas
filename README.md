@@ -16,7 +16,7 @@ In order to run the script, you need to have these Python packages installed:
  - Pytrie
  - netaddr
 
-To compress a data-set, you can use one of these two format-formats of input:
+To compress a data-set, you can use one of these two formats of input:
 
 ## Format 1:
 ```shell
@@ -46,14 +46,14 @@ Example:
 After selecting the data-set with the correct format (commenting out the files not used in the script):
 
 ```shell
-IPfilenameS_1 = os.path.abspath("Data_files/bgp_valid_announcements.txt")
-# IPfilenameS_1 = os.path.abspath("Data_files/bgp_announcements.txt")
-IPfilenameS_2 = os.path.abspath("Data_files/roa_list.txt")
+IPfilenameF_1 = os.path.abspath("Data_files/bgp_valid_announcements.txt")
+# IPfilenameF_1 = os.path.abspath("Data_files/bgp_announcements.txt")
+IPfilenameF_2 = os.path.abspath("Data_files/roa_list.txt")
 
 # You switch between these two depending on the format of your input
 
-# Trie_Dict = getFormat_1(IPfilenameS_1)
-Trie_Dict = getFormat_2(IPfilenameS_2)
+# Trie_Dict = getFormat_1(IPfilenameF_1)
+Trie_Dict = getFormat_2(IPfilenameF_2)
 ```
 
 simply run the script.
