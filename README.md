@@ -10,6 +10,7 @@ per line of all the result data.
 # How to use:
 
 You need to have these Python packages:
+ - RPKI Toolkit (https://github.com/dragonresearch/rpki.net)
  - Pytrie
  - netaddr
 
