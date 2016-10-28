@@ -9,7 +9,7 @@ This branch has the data-sets used in "MaxLength Considered Harmful to the RPKI"
 # How to use:
 
 The script takes a data-set of prefix's and outputs the compressed list of the data-set. 
-You can use it for evaluation and stats, it uses the exact compression algorithm as the script in master.
+You can use it for evaluation and reproducibility, it uses the exact compression algorithm as the script in master.
 
 In order to run the script, you need to have these Python packages installed:
 
