@@ -5,7 +5,7 @@ import netaddr,os
 from multiprocessing import Process, Manager, Pool,cpu_count
 import time
 
-def getStyle_1(filename):
+def getFormat_1(filename):
     IPdict = dict()
     Trie_dict = {}
     # rip = 0
@@ -39,7 +39,7 @@ def getStyle_1(filename):
     # print "Number of ip's is:", rip
     return Trie_dict
 
-def getStyle_2(filename):
+def getFormat_2(filename):
     Trie_dict = {}
     file = open(filename, 'r')
     roa = 0
@@ -231,14 +231,14 @@ def print_dict(Dict):
             print str(prefix[0]) ,  str(prefix[1]) , str(prefix[2]) +'-'+ str(prefix[3])
 
 
-IPfilenameS_1 = os.path.abspath("Data_files/bgp_valid_announcements.txt")
-# IPfilenameS_1 = os.path.abspath("Data_files/bgp_announcements.txt")
-IPfilenameS_2 = os.path.abspath("Data_files/roa_list.txt")
+IPfilenameF_1 = os.path.abspath("Data_files/bgp_valid_announcements.txt")
+# IPfilenameF_1 = os.path.abspath("Data_files/bgp_announcements.txt")
+IPfilenameF_2 = os.path.abspath("Data_files/roa_list.txt")
 
 # You switch between these two depending on the format of your input
 
-# Trie_Dict = getStyle_1(IPfilenameS_1)
-Trie_Dict = getStyle_2(IPfilenameS_2)
+# Trie_Dict = getFormat_1(IPfilenameF_1)
+Trie_Dict = getFormat_2(IPfilenameF_2)
 
 # This is just a counter of how many prefix's in all of the Tries.
 before = sum([len(Trie_Dict[key]) for key in Trie_Dict.keys()])
