@@ -15,7 +15,7 @@ To test a set of prefix's, you can use any of the two styles of input:
 ## Style 1:
 ```shell
 Format:
-Prefix/prefixLen-[max-len],ASN
+Prefix/prefixLen-[maxLength],ASN
 
 Example:
 95.187.117.0/24-24,39891
@@ -28,7 +28,7 @@ Example:
 ```shell
 Format:
 
-timeStamp ASN Prefix1/prefix1Length-[max-len] [Prefix2]/[prefix2-len]-[max-len] ...
+timeStamp ASN Prefix1/prefix1Length-[maxLength] [Prefix2]/[prefix2Length]-[prefix2-maxLength] ...
 
 Example:
 
