@@ -15,24 +15,24 @@ def parseROAs(roaDumpPath, outputFilename='roa_list.txt'):
         Given a ROAs rcynic dump, this function uses 'scan_roas' tool from 'rpki.net' (included in this repository)
         to parse the ROAs in the directory and creates an ouput file with each ROA as an one line.
     '''
-    outputFilename = 'Data/parsedData/' + outputFilename
     terminal = subprocess.Popen(
-        ['tools/scan_roas', os.path.abspath(roaDumpPath)], stdout=subprocess.PIPE)
+        ['tools/scan_roas', roaDumpPath], stdout=subprocess.PIPE)
     output = terminal.communicate()[0]
     open(outputFilename, 'w').write(output)
     return outputFilename
 
-
-def parseBGPs(BGPDumpPath, outputFilename='bgp_announcements.txt'):
+def parseBGPs(BGPDumpPaths, outputFilename='bgp_announcements.txt'):
     '''
         Given a BGP RIB Dump, this function uses the parser tool 'bgp_announcement_parser' included in the repository
         to create an ouput file that contains all the BGP announcements.
     '''
-    outputFilename = 'Data/parsedData/' + outputFilename
-    terminal = subprocess.call(
-        ['./tools/bgp_announcement_parser', os.path.abspath(BGPDumpPath), outputFilename], stdout=subprocess.PIPE)
+    args = ['./tools/bgp_announcement_parser']
+    for i in range(len(BGPDumpPaths)):
+        args.append(BGPDumpPaths[i])
+    args.append(outputFilename)
+    terminal = subprocess.Popen(args, stdout=subprocess.PIPE)
+    terminal.wait()
     return outputFilename
-
 
 def getBGPs(filename):
     IPdict = dict()
@@ -45,7 +45,7 @@ def getBGPs(filename):
         AS = line[1]
         IP = line[0]
         ip = IP.split('-')
-        prefix = ip[0]
+        prefix = ip[0].replace(' ', '')
         key = mf.prefix_to_key(netaddr.IPNetwork(prefix))
         prefixLength = len(key.split('$')[1])
         try:
@@ -149,19 +149,15 @@ def compress(AS, mDict):
                     # than the max of children
                     node.value[2] = minML([fchild, schild])
                 # Only hide a child if the parent's max length is covering the child's max length
-                # b_list = [node,fchild,schild]
-                # print 'before:',b_list
                 if node.value[2] >= fchild.value[2]:
                     key = mf.prefix_to_key(netaddr.IPNetwork(fchild.value[1]))
                     del Trie[key]
-                    # del b_list[1]
                 # Only hide a child if the parent's max length is covering the
                 # child's max length
                 if node.value[2] >= schild.value[2]:
                     key = mf.prefix_to_key(netaddr.IPNetwork(schild.value[1]))
                     del Trie[key]
-                    # del b_list[-1]
-                # print 'after:',b_list
+
 
         def minML(childList):
             ''' This method should return the min of the children's maxLength'''
@@ -184,8 +180,8 @@ def compress(AS, mDict):
     mDict[AS] = final_compress(t)
 
 
-def testROA(roaDumpPath):
-    roaDump = parseROAs(roaDumpPath)
+def testROA(roaDumpPaths):
+    roaDump = parseROAs(roaDumpPaths)
     Trie_Dict, before = getROAs(roaDump)
 
     def compressAll():
@@ -208,9 +204,8 @@ def testROA(roaDumpPath):
     print "compression time:", end - begin, "seconds"
 
 
-def testAllBGP(bgpDumpPath):
-    bgpDump = parseBGPs(bgpDumpPath)
-
+def testAllBGP(bgpDumpPaths):
+    bgpDump = parseBGPs(bgpDumpPaths)
     Trie_Dict, before = getBGPs(bgpDump)
 
     def compressAll():
@@ -233,12 +228,16 @@ def testAllBGP(bgpDumpPath):
     print "compression time:", end - begin, "seconds"
 
 
-def testValidBGP(bgpDumpPath, roaDumpPath):
+def testValidBGP(bgpDumpPaths, roaDumpPath):
+    bgpDump = 'bgp_announcements.txt'
+    roaDump = 'roa_list.txt'
+    if not os.path.isfile('bgp_announcements.txt'):
+        bgpDump = parseBGPs(bgpDumpPaths)
+    if not os.path.isfile('roa_list.txt'):
+        roaDump = parseROAs(roaDumpPath)
 
-    roaDump = parseROAs(roaDumpPath)
-    bgpDump = parseBGPs(bgpDumpPath)
     validDump = save_valid_announcements_to_file(
-        bgpDump, roaDump, 'Data/parsedData/' + 'bgp_valid_announcements.txt')
+        bgpDump, roaDump)
 
     Trie_Dict, before = getBGPs(validDump)
 
@@ -261,10 +260,27 @@ def testValidBGP(bgpDumpPath, roaDumpPath):
     print "compression rate:", p, '%'
     print "compression time:", end - begin, "seconds"
 
-ROADumpPath, BGPDumpPath = sys.argv[1:3]
 
-testROA(ROADumpPath)
-print '------'
-testAllBGP(BGPDumpPath)
-print '------'
-testValidBGP(BGPDumpPath, ROADumpPath)
+def main():
+    if len(sys.argv) < 2:
+        print 'usage:', argv[0], 'roa_file [bgp_advertisement_file1, bgp_advertisement_file2, ..]'
+        return
+
+    if len(sys.argv) < 3:
+        ROADumpPath = sys.argv[1]
+        print 'Number of PDUs today scenario:'
+        testROA(ROADumpPath)
+        return
+
+    elif len(sys.argv) >= 3:
+        ROADumpPath = sys.argv[1]
+        BGPDumpPaths = sys.argv[2:]
+        print 'Number of PDUs today scenario:'
+        testROA(ROADumpPath)
+        print 'Full deployment, minimal ROAs, no maxLength scenario:'
+        testAllBGP(BGPDumpPaths)
+        print 'Today, minimal ROAs, no maxLength scenario:'
+        testValidBGP(BGPDumpPaths, ROADumpPath)
+
+if __name__ == "__main__":
+    main()
