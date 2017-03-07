@@ -12,7 +12,7 @@ This branch has the data-sets used in "MaxLength Considered Harmful to the RPKI"
  - The output format is what you would pass into compress_roas.py as a BGP data-set.
 - ROA data folder:
  - You first need to install RPKI.net package (https://rpki.net/wiki/doc/RPKI/Installation)
-  - Make sure to install the one from this link since the Github version has sligtily diffrent output format.
+   - Make sure to install the one from this link since the Github version has sligtily diffrent output format.
  - Run the following command to fetch the RPKI data using rcynic (https://rpki.net/wiki/doc/RPKI/RP/rcynic), you can use the config sample file included with the package (you may want to edit the download locations of the data).
  ```
  rcynic -c rcynic_config_file
