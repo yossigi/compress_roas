@@ -231,9 +231,9 @@ def testAllBGP(bgpDumpPaths):
 def testValidBGP(bgpDumpPaths, roaDumpPath):
     bgpDump = 'bgp_announcements.txt'
     roaDump = 'roa_list.txt'
-    if not os.path.isfile('bgp_announcements.txt'):
+    if not os.path.isfile(bgpDump):
         bgpDump = parseBGPs(bgpDumpPaths)
-    if not os.path.isfile('roa_list.txt'):
+    if not os.path.isfile(roaDump):
         roaDump = parseROAs(roaDumpPath)
 
     validDump = save_valid_announcements_to_file(
@@ -263,7 +263,7 @@ def testValidBGP(bgpDumpPaths, roaDumpPath):
 
 def main():
     if len(sys.argv) < 2:
-        print 'usage:', argv[0], 'roa_file [bgp_advertisement_file1, bgp_advertisement_file2, ..]'
+        print 'usage:', sys.argv[0], 'roa_file [bgp_advertisement_file1, bgp_advertisement_file2, ..]'
         return
 
     if len(sys.argv) < 3:
