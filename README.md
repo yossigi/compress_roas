@@ -9,7 +9,7 @@ per line of all the result data.
 
 # How to use:
 
-You first need to install RPKI.net package (https://github.com/dragonresearch/rpki.net) and then run the following command to fetch the RPKI data using rcynic (https://rpki.net/wiki/doc/RPKI/RP/rcynic), you can use the config sample file included with the package (you may want to edit the download locations of the data).
+You first need to install RPKI.net package (https://rpki.net/) and then run the following command to fetch the RPKI data using rcynic (https://rpki.net/wiki/doc/RPKI/RP/rcynic), you can use the config sample file included with the package (you may want to edit the download locations of the data).
  ```
  rcynic -c rcynic_config_file
  ```
