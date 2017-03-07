@@ -21,4 +21,4 @@ rpki-rtr cronjob --scan-roas compress-roas [roa-directory] [server/PDU-directory
 ```
 
 # Reproducing results 
-To reproduce the results from "MaxLength Considered Harmful to the RPKI" (https://eprint.iacr.org/2016/1015.pdf) use the "Reproducibility" branch.
+To reproduce the results from "MaxLength Considered Harmful to the RPKI" (https://eprint.iacr.org/2016/1015.pdf) use the "Reproducibility" branch (see README.md there).
