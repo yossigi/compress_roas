@@ -1,0 +1,64 @@
+#!/usr/bin/env python
+#
+# $Id$
+#
+# Copyright (C) 2015-2016  Parsons Government Services ("PARSONS")
+# Portions copyright (C) 2014  Dragon Research Labs ("DRL")
+#
+# Permission to use, copy, modify, and distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notices and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND PARSONS AND DRL DISCLAIM ALL
+# WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS.  IN NO EVENT SHALL
+# PARSONS OR DRL BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR
+# CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS
+# OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT,
+# NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION
+# WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+"""
+Search an authenticated result tree from an rcynic run for ROAs, and
+prints out the signing time, ASN, and prefixes for each ROA, one ROA
+per line.
+"""
+
+import os
+import argparse
+
+import rpki.config
+import rpki.POW
+
+from rpki.rcynicdb.iterator import authenticated_objects
+
+def check_dir(d):
+    if not os.path.isdir(d):
+        raise argparse.ArgumentTypeError("%r is not a directory" % d)
+    return d
+
+class ROA(rpki.POW.ROA):                # pylint: disable=W0232
+
+    @property
+    def prefixes(self):
+        v4, v6 = self.getPrefixes()     # pylint: disable=E1101
+        for prefix, length, maxlength in (v4 or ()) + (v6 or ()):
+            if maxlength is None or length == maxlength:
+                yield "%s/%d" % (prefix, length)
+            else:
+                yield "%s/%d-%d" % (prefix, length, maxlength)
+
+    def __str__(self):
+        # pylint: disable=E1101
+        return "%s %s %s" % (self.signingTime(), self.getASID(), " ".join(self.prefixes))
+
+cfg = rpki.config.argparser(doc = __doc__)
+cfg.argparser.add_argument("rcynic_dir", nargs = "?", type = check_dir,
+                           help = "rcynic authenticated output directory")
+args = cfg.argparser.parse_args()
+
+for uri, roa in authenticated_objects(args.rcynic_dir,
+                                      uri_suffix = ".roa",
+                                      class_map = dict(roa = ROA)):
+    roa.extractWithoutVerifying()
+    print roa
