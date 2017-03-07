@@ -2,7 +2,7 @@ This branch has the data-sets used in "MaxLength Considered Harmful to the RPKI"
 
 
 ### Data-sets used:
-- ##BGP RIB files:
+- BGP RIB files:
  - For the IPv6 you can find the RIB file through here (http://archive.routeviews.org/route-views6/bgpdata/)
  - For the IPv4 you can find the RIB file through here (http://archive.routeviews.org/route-views4/bgpdata/)
  - After you download the RIB file you would need to use 'libBGPdump' (https://bitbucket.org/ripencc/bgpdump/wiki/Home) to  parse the RIB file you downloaded from the binary format to text format.
@@ -10,7 +10,7 @@ This branch has the data-sets used in "MaxLength Considered Harmful to the RPKI"
  ./bgpdump RIB_file > output_file.txt
  ```
  - The output format is what you would pass into compress_roas.py as a BGP data-set.
-- ##ROA data folder:
+- ROA data folder:
  - You first need to install RPKI.net package (https://github.com/dragonresearch/rpki.net) and then run the following command to fetch the RPKI data using rcynic (https://rpki.net/wiki/doc/RPKI/RP/rcynic), you can use the config sample file included with the package (you may want to edit the download locations of the data).
  ```
  rcynic -c rcynic_config_file
