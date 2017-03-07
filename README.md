@@ -1,4 +1,4 @@
-This branch has the data-sets used in "MaxLength Considered Harmful to the RPKI" (https://eprint.iacr.org/2016/1015.pdf) and below are the instructions on how to reproduce the results provided in the paper.
+This branch has the data-sets used in "MaxLength Considered Harmful to the RPKI" (https://eprint.iacr.org/2016/1015.pdf) and below are the instructions on how to reproduce the results provided in the paper and/or run them on new datasets.
 
 
 ### Data-sets used:
@@ -15,11 +15,11 @@ This branch has the data-sets used in "MaxLength Considered Harmful to the RPKI"
  ```
  rcynic -c rcynic_config_file
  ```
- - After you have the folder 'authenticated', you can simply pass that folder to compress_roas.py so that it would parse it to get all the ROAs *You might need to manually delet the test RPKI data within 'authenticated'*.
+ - After you have the folder 'authenticated', you can simply pass that folder to compress_roas.py so that it would parse it to get all the ROAs.
 
 # How to use:
 
-compress_roas takes in two or more data-sets paths. The first for the RPKI 'authenticated' directory and the following paths for the BGP rib (text-format) data-sets.
+compress_roas takes as input the path to the RPKI 'authenticated' directory, and may also take mutiple paths to BGP RIB (text-format) files to reproduce our results as we explain in the following section.
 
 In order to run the script, you need to have these Python packages installed:
 
