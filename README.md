@@ -21,7 +21,8 @@ This branch has the data-sets used in "MaxLength Considered Harmful to the RPKI"
 
 # How to use:
 
-compress_roas takes as input the path to the RPKI 'authenticated' directory, and may also take mutiple paths to BGP RIB (text-format) files to reproduce our results as we explain in the following section.
+## compress_roas
+It takes as input the path to the RPKI 'authenticated' directory, and may also take mutiple paths to BGP RIB (text-format) files to reproduce our results as we explain in the following section.
 
 In order to run the script, you need to have these Python packages installed:
 
@@ -37,6 +38,22 @@ Then you would use compress_roas.py as follows:
 ```
 compress_roas.py ROA-data-folder [BGP_data_file1, BGP_data_file2, ..]
 ```
+***
+## tools/bgp_announcement_parser.cpp
+This script takes in as an input the BGP RIB in the text format (the output of 'bgpdump') and parse it such that it generates an output file with only the prefixs anounced with thier ASN as follows:
+```
+prefix1/prefix1Len-prefix1Len,ASN1
+prefix2/prefix2Len-prefix2Len,ASN2
+.
+.
+```
+***
+## tools/scan_roas.py
+scan_roas searchs the authenticated result tree from an rcynic run for ROAs, and prints out the signing time, ASN, and prefixes for each ROA, one ROA per line.
+Full documentation can be found here (https://rpki.net/wiki/doc/RPKI/Utils#scan_roas)
+***
+## valid_announcements.py
+This script has the function 'save_valid_announcements_to_file' that takes in a BGP announcements file (the output of bgp_announcement_parser) and a ROA list file (the output of 'scan_roas') and then outputs a list of the prefixs that appear in the BGP annoncments and are mentioned in a ROA (so they are valid).
 
 # Reproduction
 
