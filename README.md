@@ -41,7 +41,7 @@ compress_roas.py ROA-data-folder [BGP_data_file1, BGP_data_file2, ..]
 ```
 ***
 ## tools/bgp_announcement_parser.cpp
-This script takes in as an input the BGP RIB in the text format (the output of 'bgpdump') and parses it such that it generates an output file with only the prefixes announced with their ASN as follows:
+This script takes in as an input the BGP RIB in the text format (the output of 'bgpdump') and parses it such that it generates an output file that lists the BGP announcements.
 ```
 prefix1/prefix1Len-prefix1Len,ASN1
 prefix2/prefix2Len-prefix2Len,ASN2
@@ -50,7 +50,7 @@ prefix2/prefix2Len-prefix2Len,ASN2
 ```
 ***
 ## tools/scan_roas.py
-scan_roas searchs the authenticated result tree from an rcynic run for ROAs, and prints out the signing time, ASN, and prefixes for each ROA, one ROA per line.
+scan_roas searches the authenticated directory of RPKI objects that rcynic creates, and prints out the signing time, ASN, and prefixes for each ROA, one ROA per line.
 Full documentation can be found here (https://rpki.net/wiki/doc/RPKI/Utils#scan_roas)
 ***
 ## valid_announcements.py
