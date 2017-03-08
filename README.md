@@ -9,6 +9,7 @@ This branch has the data-sets used in "MaxLength Considered Harmful to the RPKI"
  ```
  ./bgpdump RIB_file > output_file.txt
  ```
+ - Keep in mind that the output file size is large (around 8 GB)
  - The output format is what you would pass into compress_roas.py as a BGP data-set.
 - ROA data folder:
  - You first need to install RPKI.net package (https://rpki.net/wiki/doc/RPKI/Installation)
