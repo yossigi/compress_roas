@@ -7,39 +7,38 @@ import netaddr
 import subprocess
 
 
-def check_dir(d):
-    ''' A function to check if the dir inputted is valid'''
-    if not os.path.isdir(d):
-        raise argparse.ArgumentTypeError("%r is not a directory" % d)
-    return d
-
-
 def getROA(output):
-    '''This function take the output of scan_roas and extract the data (prefix,AS,maxLength)
-        and return a dictionary with all the unique* prefix's from input'''
+    '''
+    Input: a list of ROAs as an input and extracts the data (prefix,AS,maxLength)
+    Output: a dictionary with a Trie of prefixes for each unique AS in the ROAs.
+    '''
     Trie_dict = dict()
-    output = output[:-1].split('\n')  # Split the data line by line.
+    output = output.split('\n')
     for line in output:
-        line = line.split(' ')
-        Time = line[0]  # Take the time of the ROA signing.
+        line = line.replace('\n', "").split(' ')
+        Time = line[0]  # Signing time of ROA.
         AS = line[1]  # AS number
-        IP = line[2:]  # the prefix or prefix's with '/prefixLength'
+        IP = line[2:]  # Prefixes with '/prefixLength'
         for ip in IP:
-            # In case an ROA have more than one prefix
+            # In the case of multiple prefixes
             ip = ip.split('-')  # To get the maxLength if it's there
             prefix = ip[0]
-            # generate the key to be used in the Trie
-            key = prefix_to_key(prefix)
             prefixLength = netaddr.IPNetwork(prefix).prefixlen
+
             try:
                 # check if the maxLength exists.
                 maxLength = int(ip[1])
                 if maxLength < prefixLength:
-                    # If you found maxLength and that maxLength is shorter than
-                    # the prefixLength, then skip this prefix.
+                    # If maxLength is shorter than prefixLength, skip this
+                    # prefix.
                     continue
-            except IndexError:  # If a maxLength doesn't exist.
+            except IndexError:
+                # If maxLength doesn't exist, set maxLength to prefixLength.
                 maxLength = prefixLength
+
+            # Generate the key to be used to insert into the Trie
+            key = prefix_to_key(prefix)
+
             if AS in Trie_dict:
                 if key in Trie_dict[AS]:
                     Trie_dict[AS][key][3] = max(
@@ -48,83 +47,7 @@ def getROA(output):
                     Trie_dict[AS][key] = [Time, AS, prefix, maxLength]
             else:
                 Trie_dict[AS] = {key: [Time, AS, prefix, maxLength]}
-
     return Trie_dict
-
-
-def compress(AS, mDict):
-    def final_compress(Trie):
-        def compress_Tries(node):
-            ''' This function compresses the prefix's '''
-            if node is None or not node.children:
-                # When you reach a leaf node, just stop.
-                return
-
-            g = node.children.iteritems()
-
-            # To get pointers on the children nodes.
-            fchild = node.children.get(str(g.next()[0]))
-            try:
-                schild = node.children.get(str(g.next()[0]))
-            # in case a second child doesn't exist.
-            except StopIteration:
-                schild = None
-
-            # The recursive call to reach the end of the Trie.
-            compress_Tries(fchild)
-            compress_Tries(schild)
-
-            # Check if the node is an prefix (not just a connecting node) and
-            # that 2 children exist with prefix's and value's
-            if node.value is not NULL and fchild.value is not NULL and schild is not None and schild.value is not NULL:
-                # To check if the maxLength of the parent is higher or equal to
-                # the max(children's  maxLength)
-                if node.value[3] >= maxML([fchild, schild]):
-                    pass  # No need to change the maxLength in this case.
-                else:
-                    # Only update the max length of the parent if it's less
-                    # than the max of children
-                    node.value[3] = minML([fchild, schild])
-                # Only hide a child if the parent's max length is covering the
-                # child's max length
-                if node.value[3] >= fchild.value[3]:
-                    key = prefix_to_key(fchild.value[2])
-                    del Trie[key]
-                # Only hide a child if the parent's max length is covering the
-                # child's max length
-                if node.value[3] >= schild.value[3]:
-                    key = prefix_to_key(schild.value[2])
-                    del Trie[key]
-
-        def minML(childList):
-            ''' This method should return the min of the children's maxLength'''
-            numlist = list()
-            for child in childList:
-                numlist += [child.value[3]]  # Add the MaxLength to the list
-            return min(numlist)
-
-        def maxML(childList):
-            ''' This method should return the max of the children's maxLength'''
-            numlist = list()
-            for child in childList:
-                numlist += [child.value[3]]  # Add the MaxLength to the list
-            return max(numlist)
-
-        compress_Tries(Trie._root)
-        return dict(Trie)
-
-    t = Trie(**mDict[AS])
-    mDict[AS] = final_compress(t)
-
-
-def print_dict(Dict):
-    ''' Print all the data '''
-    for AS in Dict.values():
-        for prefix in AS.values():
-            prefix = str(prefix[0]) + ' ' + str(prefix[1]) + \
-                ' ' + str(prefix[2]) + '-' + str(prefix[3])
-            print(prefix)
-
 
 def prefix_to_key(prefix):
     ''' A function given a prefix generates a binary key to be used in a Trie.'''
@@ -140,23 +63,78 @@ def prefix_to_key(prefix):
     key += address
     return key
 
-parser = argparse.ArgumentParser(
-    description="Scan for ROA's and compress them")
-parser.add_argument("rcynic_dir", nargs="+", type=check_dir,
-                    help="rcynic authenticated output directory")
+def compress(AS, mDict):
+    _t = Trie(**mDict[AS])
 
-args = parser.parse_args()
+    def compress_Tries(node):
+        ''' This function compresses the prefix's '''
+        if node is None or (not node.children):
+            # When you reach a leaf node, just stop.
+            return
 
-# Here we call the utility "scan_roas" to get the list of (ASN, IP/prefix,
-# - maxLength)
-terminal = subprocess.Popen(
-    ['scan_roas', args.rcynic_dir[0]], stdout=subprocess.PIPE)
-output = terminal.communicate()[0]
+        g = node.children.iteritems()
 
-# To generate the dictionary as an input to the Trie.
-prefix_dict = getROA(output)
+        # To get pointers on the children nodes.
+        fchild = node.children.get(str(g.next()[0]))
+        try:
+            schild = node.children.get(str(g.next()[0]))
+        # in case a second child doesn't exist.
+        except StopIteration:
+            schild = None
 
-# Compress the data in the Trie.
-[compress(AS, prefix_dict) for AS in prefix_dict.keys()]
+        # The recursive call to reach the end of the Trie.
+        compress_Tries(fchild)
+        compress_Tries(schild)
 
-print_dict(prefix_dict)  # Print the output.
+        # Check if the node is an prefix (not just a connecting node) and
+        # that 2 children exist with prefix's and value's
+        if node.value is not NULL and fchild.value is not NULL and schild is not None and schild.value is not NULL:
+            # To check if the maxLength of the parent is higher or equal to
+            # the max(children's  maxLength)
+            if node.value[2] >= maxML([fchild, schild]):
+                pass  # No need to change the maxLength in this case.
+            else:
+                # Only update the max length of the parent if it's less
+                # than the max of children
+                node.value[2] = minML([fchild, schild])
+            # Only hide a child if the parent's max length is covering the child's max length
+            if node.value[2] >= fchild.value[2]:
+                key = mf.prefix_to_key(netaddr.IPNetwork(fchild.value[1]))
+                del Trie[key]
+            # Only hide a child if the parent's max length is covering the
+            # child's max length
+            if node.value[2] >= schild.value[2]:
+                key = mf.prefix_to_key(netaddr.IPNetwork(schild.value[1]))
+                del Trie[key]
+
+    compress_Tries(_t._root)
+    mDict[AS] = dict(_t)
+
+def print_dict(Dict):
+    ''' Print all the data '''
+    for AS in Dict.values():
+        for prefix in AS.values():
+            prefix_str = str(prefix[0]) + ' ' + str(prefix[1]) + \
+                ' ' + str(prefix[2]) + '-' + str(prefix[3])
+            print(prefix_str)
+
+def main():
+
+    # Call "scan_roas" to get the list of ROAs.
+    args = 'sudo -H -u rpki scan_roas'
+    terminal = subprocess.Popen(
+        [args.split(' '), roaDumpPath], stdout=subprocess.PIPE)
+    output = terminal.communicate()[0]
+
+    # Generate the dictionary of Tries.
+    Trie_dict = getROA(output)
+
+    # Compress the data in the dictionary.
+    [compress(AS, Trie_dict) for AS in Trie_dict.keys()]
+
+    print_dict(Trie_dict)
+
+
+
+if __name__ == "__main__":
+    main()
