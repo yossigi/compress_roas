@@ -2,19 +2,14 @@ import netaddr
 
 def prefix_to_key(prefix):
     ''' A function given a prefix and AS generates a binary key to be used in a Trie.'''
-
-    address = prefix.ip.bits().replace(".", "").replace(":", "")
-    l = int(prefix.cidr.hostmask.bin, 2)
-
-    while(l > 0):
-        address = address[:-1]
-        l >>= 1
-
-    # Building the key
-    if (prefix.version == 4 or prefix.version == 6):
-        key = str(prefix.version) + '$'
-        key += address
-        return key
+    if prefix.version == 4:
+        address = prefix.ip.bits().replace(".","")
+        l = int(prefix.cidr.hostmask.bin, 2).bit_length()
+        return str(prefix.version) + "$" + address[:-l]
+    elif prefix.version == 6:
+        address = prefix.ip.bits().replace(":","")
+        l = int(prefix.cidr.hostmask.bin, 2).bit_length()
+        return str(prefix.version) + "$" + address[:-l]
     else:
         raise RuntimeError("invalid address version " + str(prefix.version))
 
