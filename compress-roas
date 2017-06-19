@@ -15,6 +15,8 @@ def getROA(output):
     Trie_dict = dict()
     output = output.split('\n')
     for line in output:
+        if line == "":
+            continue;
         line = line.replace('\n', "").split(' ')
         Time = line[0]  # Signing time of ROA.
         AS = line[1]  # AS number
@@ -23,21 +25,19 @@ def getROA(output):
             # In the case of multiple prefixes
             ip = ip.split('-')  # To get the maxLength if it's there
             prefix = ip[0]
-            prefixLength = netaddr.IPNetwork(prefix).prefixlen
-
+	    # Generate the key to be used to insert into the Trie
+            key = prefix_to_key(prefix)
+            prefixLength = len(key.split('$')[1])
             try:
                 # check if the maxLength exists.
                 maxLength = int(ip[1])
-                if maxLength < prefixLength:
-                    # If maxLength is shorter than prefixLength, skip this
-                    # prefix.
-                    continue
+		if maxLength < prefixLength:
+                	# If maxLength is shorter than prefixLength, skip this
+                	# prefix.
+                	continue;
             except IndexError:
                 # If maxLength doesn't exist, set maxLength to prefixLength.
                 maxLength = prefixLength
-
-            # Generate the key to be used to insert into the Trie
-            key = prefix_to_key(prefix)
 
             if AS in Trie_dict:
                 if key in Trie_dict[AS]:
@@ -48,6 +48,7 @@ def getROA(output):
             else:
                 Trie_dict[AS] = {key: [Time, AS, prefix, maxLength]}
     return Trie_dict
+
 
 def prefix_to_key(prefix):
     ''' A function given a prefix generates a binary key to be used in a Trie.'''
@@ -90,34 +91,35 @@ def compress(AS, mDict):
             if node.value is not NULL and fchild.value is not NULL and schild is not None and schild.value is not NULL:
                 # To check if the maxLength of the parent is higher or equal to
                 # the max(children's  maxLength)
-                if node.value[2] >= maxML([fchild, schild]):
+                minC = minML([fchild, schild])
+                if minC <= node.value[3]:
                     pass  # No need to change the maxLength in this case.
                 else:
                     # Only update the max length of the parent if it's less
                     # than the max of children
-                    node.value[2] = minML([fchild, schild])
+                    node.value[3] = minC
                 # Only hide a child if the parent's max length is covering the child's max length
-                if node.value[2] >= fchild.value[2]:
-                    key = mf.prefix_to_key(netaddr.IPNetwork(fchild.value[1]))
+                if node.value[3] >= fchild.value[3]:
+                    key = prefix_to_key(netaddr.IPNetwork(fchild.value[2]))
                     del Trie[key]
                 # Only hide a child if the parent's max length is covering the
                 # child's max length
-                if node.value[2] >= schild.value[2]:
-                    key = mf.prefix_to_key(netaddr.IPNetwork(schild.value[1]))
+                if node.value[3] >= schild.value[3]:
+                    key = prefix_to_key(netaddr.IPNetwork(schild.value[2]))
                     del Trie[key]
 
         def minML(childList):
             ''' This method should return the min of the children's maxLength'''
             numlist = list()
             for child in childList:
-                numlist += [child.value[2]]  # Add the MaxLength to the list
+                numlist += [child.value[3]]  # Add the MaxLength to the list
             return min(numlist)
 
         def maxML(childList):
             ''' This method should return the max of the children's maxLength'''
             numlist = list()
             for child in childList:
-                numlist += [child.value[2]]  # Add the MaxLength to the list
+                numlist += [child.value[3]]  # Add the MaxLength to the list
             return max(numlist)
 
         compress_Tries(Trie._root)
@@ -135,12 +137,13 @@ def print_dict(Dict):
             print(prefix_str)
 
 def main():
+
     # Call "scan_roas" to get the list of ROAs.
     args = 'sudo -H -u rpki scan_roas'
     terminal = subprocess.Popen(
         args.split(' '), stdout=subprocess.PIPE)
     output = terminal.communicate()[0]
-    print output
+
     # Generate the dictionary of Tries.
     Trie_dict = getROA(output)
 
