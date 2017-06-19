@@ -1,5 +1,6 @@
 # compress_roas
 `compress-roas` wades through the ROAs `rcynic` (from RPKI.net, see below) collects and compresses the prefixes based on the prefix length and max length specified in the ROA.
+
 For simplicity, `compress-roas` produces an output with the same format as `scan_roas` (from RPKI.net):
 ```shell
   [Time] [ASN] [IP_Prefix] [maxLength]
