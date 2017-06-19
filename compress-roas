@@ -6,7 +6,6 @@ from pytrie import NULL, SortedStringTrie as Trie
 import netaddr
 import subprocess
 
-
 def getROA(output):
     '''
     Input: a list of ROAs as an input and extracts the data (prefix,AS,maxLength)
@@ -49,20 +48,19 @@ def getROA(output):
                 Trie_dict[AS] = {key: [Time, AS, prefix, maxLength]}
     return Trie_dict
 
-
 def prefix_to_key(prefix):
     ''' A function given a prefix generates a binary key to be used in a Trie.'''
     prefix = netaddr.IPNetwork(prefix)
-    address = prefix.ip.bits().replace(".", "").replace(":", "")
-    l = int(prefix.cidr.hostmask.bin, 2)
-    while(l > 0):
-        address = address[:-1]
-        l >>= 1
-
-    # Building the key
-    key = str(prefix.version) + '$'
-    key += address
-    return key
+    if prefix.version == 4:
+        address = prefix.ip.bits().replace(".","")
+        l = int(prefix.cidr.hostmask.bin, 2).bit_length()
+        return str(prefix.version) + "$" + address[:-l]
+    elif prefix.version == 6:
+        address = prefix.ip.bits().replace(":","")
+        l = int(prefix.cidr.hostmask.bin, 2).bit_length()
+        return str(prefix.version) + "$" + address[:-l]
+    else:
+        raise RuntimeError("invalid address version " + str(prefix.version))
 
 def compress(AS, mDict):
     def final_compress(Trie):
