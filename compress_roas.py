@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -
+#! /usr/bin/env python
 
 from pytrie import NULL, SortedStringTrie as Trie
 from valid_announcements import save_valid_announcements_to_file
