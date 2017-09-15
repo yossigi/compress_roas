@@ -14,11 +14,17 @@ def parseROAs(roaDumpPath, outputFilename='roa_list.txt'):
     '''
         Given a ROAs rcynic dump, this function uses 'scan_roas' tool from 'rpki.net' (included in this repository)
         to parse the ROAs in the directory and creates an ouput file with each ROA as an one line.
+
+        This function also accepts an already filtered txt file with ROAs (one per line).
     '''
-    terminal = subprocess.Popen(
-        ['tools/scan_roas', roaDumpPath], stdout=subprocess.PIPE)
-    output = terminal.communicate()[0]
-    open(outputFilename, 'w').write(output)
+    if (not roaDumpPath.endswith(".txt")):
+        terminal = subprocess.Popen(
+            ['tools/scan_roas', roaDumpPath], stdout=subprocess.PIPE)
+        output = terminal.communicate()[0]
+        open(outputFilename, 'w').write(output)
+    else:
+        outputFilename = roaDumpPath
+
     return outputFilename
 
 def parseBGPs(BGPDumpPaths, outputFilename='bgp_announcements.txt'):
