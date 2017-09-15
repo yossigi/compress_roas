@@ -24,19 +24,26 @@ Make sure you have the following installed before running `compress_roas.py`:
    sudo -u rpki rcynic-dump [authenticated-output-path]
    ```
   - Now that you have the folder 'authenticated' with the RPKI data, you will pass it to compress_roas.py (see below).
+  - Due to the unavailability of a public directory with snapshots of the RPKI data history (like BGPView), it might be more convenient to use the RPKI data we uploaded [here](tools/) to reproduce the results.
+    - The data is uploaded in ROA list format, so it's recommended to use the second style of using `compress_roas.py` described below to handle the data sets.
 
 ## How to use:
-Make sure to build "bgp_announcement_parser" using the following command:
+Make sure to build "bgp_announcement_parser" before running `compress_roas.py` using the following instructions:
 ```
 cd tools
 make 
 ```
 
 ### compress_roas.py
-Takes as input the path to the RPKI 'authenticated' directory, and may also take mutiple paths to BGP RIB (text-format) files to reproduce the results.
+Takes as input the path to the RPKI 'authenticated' directory, and may also take multiple paths to BGP RIB (text-format) files to reproduce the results.
 ```
-compress_roas.py ROA-data-folder [BGP_data_file1, BGP_data_file2, ..]
+compress_roas.py ROA-data-folder [BGP_data_set1, BGP_data_set2, ..]
 ```
+`compress_roas.py` can also take a list of ROAs `ROA-list.txt` (ROAs should have the same format that `scan_roas` produces ([here](https://github.com/yossigi/compress_roas#compress_roas)), one per line, saved in a `txt` file) as an input to provide more portability.
+```
+compress_roas.py ROA-list.txt [BGP_data_set1, BGP_data_set2, ..]
+```
+
 ***
 ### tools/bgp_announcement_parser.cpp
 This script takes in as an input the BGP RIB in the text format (the output of 'bgpdump') and parses it such that it generates an output file will all of the BGP announcements as follows:
@@ -48,21 +55,27 @@ prefix2/prefix2Len-prefix2Len,ASN2
 ```
 ***
 ### tools/scan_roas.py
-`scan_roas` searches the authenticated database of RPKI ROA objects that rcynic creates, and prints out the signing time, ASN, and prefixes for each ROA, one ROA per line.
+`scan_roas` (from [RPKI.net](https://github.com/dragonresearch/rpki.net/blob/b2eee832ae27af6ea82f412ee304a778b0910851/doc/manual/36.RPKI.Utils.md#scan_roas) tools) searches the authenticated database of RPKI ROA objects that rcynic creates, and prints out the signing time, ASN, and prefixes for each ROA, one ROA per line.
 ```
 sudo -u rpki scan_roas [-h | --help] [rcynic_directory]
 ```
 ***
 ### valid_announcements.py
-This script has the function 'save_valid_announcements_to_file' that takes in a BGP announcements file (the output of 'bgp_announcement_parser') and a ROA list file (the output of 'scan_roas') and then outputs a list of the prefixs that appear in the BGP annoncments and are mentioned in a ROA from the list of ROAs (so that the prefix is valid).
+This script has the function 'save_valid_announcements_to_file' that takes in a BGP announcements file (the output of 'bgp_announcement_parser') and a ROA list file (the output of 'scan_roas') and then outputs a list of the prefixes that appear in the BGP announcements and are mentioned in a ROA from the list of ROAs (so that the prefix is valid).
 
 # Reproduction
 
-To reproduce all the senarios in Section 6, summraized in Table 1 of the paper. We would run the following command:
+To reproduce all the scenarios in Section 6, summarized in Table 1 of the paper. First we need to have the datasets with the desired date, then we run the following command:
+
+- If the RPKI data is in the dump "format", we use the following: 
 ```
-compress_roas.py ROA-data-folder [BGP_data_file1, BGP_data_file2, ..]
+compress_roas.py ROA-data-folder [BGP_data_set1, BGP_data_set2, ..]
 ```
-The output will point out to each specific senario, and where to find it in Table.1
+- If the RPKI data is in a list format (specified above), we use the following:
+```
+compress_roas.py ROA-list.txt [BGP_data_set1, BGP_data_set2, ..]
+```
+The output will point out to each specific scenario, and where to find it in Table.1 from the paper.
 
 ----
 Go to the master branch for how to use with RPKI-rtr tools directly.
