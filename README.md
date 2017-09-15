@@ -24,7 +24,7 @@ Make sure you have the following installed before running `compress_roas.py`:
    sudo -u rpki rcynic-dump [authenticated-output-path]
    ```
   - Now that you have the folder 'authenticated' with the RPKI data, you will pass it to compress_roas.py (see below).
-  - Due to the unavailability of a public directory with snapshots of the RPKI data history (like BGPView), it might be more convenient to use the RPKI data we uploaded [here](tools/) to reproduce the results.
+  - Due to the unavailability of a public directory with snapshots of the RPKI data history (like BGPView), it might be more convenient to use the RPKI data we uploaded [here](RPKI_dataset/) to reproduce the results.
     - The data is uploaded in ROA list format, so it's recommended to use the second style of using `compress_roas.py` described below to handle the data sets.
 
 ## How to use:
