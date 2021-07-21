@@ -54,11 +54,11 @@ def prefix_to_key(prefix):
     if prefix.version == 4:
         address = prefix.ip.bits().replace(".","")
         l = int(prefix.cidr.hostmask.bin, 2).bit_length()
-        return str(prefix.version) + "$" + address[:-l]
+        return str(prefix.version) + "$" + (address[:-l] if l > 0 else address)
     elif prefix.version == 6:
         address = prefix.ip.bits().replace(":","")
         l = int(prefix.cidr.hostmask.bin, 2).bit_length()
-        return str(prefix.version) + "$" + address[:-l]
+        return str(prefix.version) + "$" + (address[:-l] if l > 0 else address)
     else:
         raise RuntimeError("invalid address version " + str(prefix.version))
 
